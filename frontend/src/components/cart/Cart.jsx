@@ -2,9 +2,9 @@ import React from 'react';
 
 const Cart = props => {
     return(
-        <div>
+        <center>
             CART
-        </div>
+        </center>
     );
 }
 
