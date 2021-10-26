@@ -1,8 +1,18 @@
-from flask import Blueprint, request, make_response
-from flask_sqlalchemy import SQLAlchemy
+from flask import Blueprint, current_app as app
 
 accounts_blueprint = Blueprint('accounts_blueprint', __name__)
 
-@accounts_blueprint.route('/accounts', methods=['GET'])
-def get_accounts():
-    return 'Accounts'
+
+@accounts_blueprint.route('/user/<string:id>', methods=['GET'])
+def get_user(id):
+
+    users = app.db.execute('''
+    SELECT *
+    FROM Users
+    WHERE id = :id
+    ''', id = id)
+
+    if len(users) == 0:
+        return 'User does not exist', 400
+
+    return dict(users[0])
