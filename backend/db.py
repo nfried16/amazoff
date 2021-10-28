@@ -20,4 +20,6 @@ class DB:
         for additional details.  See models/*.py for examples of
         calling this function."""
         with self.engine.connect() as conn:
-            return list(conn.execute(text(sqlstr), kwargs).fetchall())
+            res = conn.execute(text(sqlstr), kwargs).fetchall()
+            return [dict(row) for row in res]
+
