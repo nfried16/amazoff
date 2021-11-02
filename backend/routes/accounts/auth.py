@@ -17,7 +17,6 @@ def create_token():
         FROM Users
         WHERE email = :email AND password = :password
         ''', email=email, password=password)[0]
-        print(user)
  
         try:
             app.db.execute('''
