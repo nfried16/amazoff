@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { withRouter } from 'react-router-dom';
 import { GetSellerReviews, GetUser } from '../../api/api';
+import EditUser from './EditUser';
 import ReviewCard from '../reviews/ReviewCard';
 
 const UserAccount = props => {
@@ -47,8 +48,14 @@ const UserAccount = props => {
                 ) : 
                 (
                     <div style = {{width: '75%', display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
-                        <div style = {{fontSize: '2rem'}}>
-                            {user.first_name + " " + user.last_name}
+                        <div style = {{fontSize: '2rem', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%'}}>
+                            <span style = {{marginRight: '1%', justifySelf: 'center'}}>
+                                {user.first_name + " " + user.last_name}
+                            </span>
+                            <EditUser 
+                                user = {user}
+                                style = {{marginLeft: '1%'}}
+                            />
                         </div>
                         <div>
                             Account #: {user.id}
@@ -60,6 +67,12 @@ const UserAccount = props => {
                                 <div>Email: {user.email}</div>
                                 <div>Address: {user.address}</div>
                                 </>
+                            )
+                        }
+                        {
+                            // Info only for self:
+                            (user.id == localStorage.getItem('id')) && (
+                                <div>Balance: {user.balance}</div>
                             )
                         }
                         { 

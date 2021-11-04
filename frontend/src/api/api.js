@@ -1,8 +1,9 @@
 import axios from 'axios';
 
 const baseURL = 'http://' + (process.env.REACT_APP_API_URL || 'localhost') + ':5000';
-console.log(baseURL)
+console.log(baseURL);
 const client = axios.create({
+    timeout: 10000,
     baseURL: baseURL
 });
 

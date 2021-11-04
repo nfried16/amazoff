@@ -5,6 +5,7 @@ import {
 	Route,
 	Redirect
 } from 'react-router-dom';
+import ProtectedRoute from './auth/ProtectedRoute';
 import { GetMe } from './api/api';
 import Login from './components/accounts/Login';
 import Cart from './components/cart/Cart';
@@ -44,19 +45,19 @@ function App() {
 		)
 	}
 
+	console.log(auth);
 	return (
 		<Router>
 			<Route path='/(home|cart|user|product|order|search)' component={NavBar} />
-			{!auth && <Redirect to='/login' />}
 			<Switch>
 				<Redirect exact from='/' to='/home' />
-				<Route exact path='/login' component={Login} />
-				<Route exact path='/home' component={Homepage} />
-				<Route exact path='/order' component={Order} />
-				<Route exact path='/cart' component={Cart} />
-				<Route exact path='/user/:id' component={UserAccount} />
-				<Route exact path='/product/:id' component = {Product} />
-				<Route exact path='/search' component={ProductList} />
+				<Route exact path='/login' component={() => <Login setAuth={setAuth}/>} />
+				<ProtectedRoute exact auth={auth} path='/home' component={Homepage} />
+				<ProtectedRoute exact auth={auth} path='/order' component={Order} />
+				<ProtectedRoute exact auth={auth} path='/cart' component={Cart} />
+				<ProtectedRoute exact auth={auth} path='/user/:id' component={UserAccount} />
+				<ProtectedRoute exact auth={auth} path='/product/:id' component = {Product} />
+				<ProtectedRoute exact auth={auth} path='/search' component={ProductList} />
 				<Redirect from='*' to='/home' />
 			</Switch>
 		</Router>

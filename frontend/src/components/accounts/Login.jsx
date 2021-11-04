@@ -22,6 +22,7 @@ const Login = props => {
                 localStorage.setItem('token', res.token);
                 localStorage.setItem('id', res.id);
                 localStorage.setItem('isSeller', res.isSeller);
+                props.setAuth(true);
                 props.history.push('/home');
             })
             .catch(err => {
