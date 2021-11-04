@@ -16,7 +16,7 @@ const EditUser = props => {
 		console.log('done');
 		setVisible(false);
 	}
-	console.log(props.user)
+	
     return (
         <>
 			<Button 
@@ -24,9 +24,17 @@ const EditUser = props => {
 				onClick={() => setVisible(!visible)} 
 				icon = {<EditOutlined/>}/>
 			<Modal title="Edit User" 
-				visible={visible} 
-				onOk={onOk} 
+				visible={visible}
 				onCancel={onOk}
+				onOk={() => {
+					form.validateFields()
+					.then(values => {
+						onOk(values);
+					})
+					.catch(info => {
+						console.log('Validate Failed:', info);
+					});
+				}}
 			>
 				<Form {...layout} form = {form}>
 					<Form.Item name="first_name" label="First Name" initialValue = {props.user.first_name} rules={[{ required: true }]}>
