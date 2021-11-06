@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Button, Row, Table } from 'antd';
 import { GetCart } from '../../api/api';
 

@@ -1,4 +1,3 @@
-import React from 'react';
 import {Login as login} from '../../api/api';
 import { withRouter } from 'react-router-dom';
 import { Form, Input, Button } from 'antd';

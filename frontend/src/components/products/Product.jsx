@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { withRouter } from 'react-router-dom';
 import { GetProductById, GetProductReviews, GetSellers } from '../../api/api';
 import { Button, Table } from 'antd';
@@ -24,7 +24,7 @@ const Product = props => {
             .catch(err => {
                 setLoading(false);
             })
-    }, [])
+    }, [props.match.params.id])
 
     const getSellers = async () => {
         const productId = props.match.params.id;
@@ -73,11 +73,13 @@ const Product = props => {
                         'Product does not exist'
                     ) : (
                         <div style = {{width: '75%', display: 'flex', display: 'flex', flexDirection: 'column', marginBottom: '10vh'}}>
-                            <div style={{ width: '100%', display: 'flex', alignItems: 'center' }}>
-                                <div style={{ width: '50%', textAlign: 'center', height: '30vh' }}>
-                                    image
+                            <div style={{ width: '100%', display: 'flex', alignItems: 'center'}}>
+                                <div style={{ width: '47.5%', display: 'flex', height: '30vh', justifyContent: 'center', alignItems: 'center', background: '#EAEDED'}}>
+                                    <img src={`data:image/jpeg;base64,${product.image}`} style = {{maxWidth: '95%', maxHeight: '95%'}} />
                                 </div>
-                                    <div style={{ width: '50%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'column', background: '#EAEDED', padding: '2%', borderRadius: '0px 5px 5px 0px' }}>
+                                <div style = {{width: '5%'}}>
+                                </div>
+                                <div style={{ width: '47.6%', height: '100%', background: '#EAEDED', display: 'flex', alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'column', padding: '2%', borderRadius: '0px 5px 5px 0px' }}>
                                     <div style={{ fontSize: '2rem' }}>
                                         {product.name}
                                     </div>
@@ -104,7 +106,7 @@ const Product = props => {
                                 </div>
                                 <div style = {{ width: '60%'}}>
                                     {reviews.map(review => (
-                                        <ReviewCard {...review}/>
+                                        <ReviewCard key={review.id} {...review}/>
                                     ))}
                                 </div>
                             </div>

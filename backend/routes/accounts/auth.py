@@ -1,5 +1,6 @@
 from flask import request, jsonify, Blueprint, current_app as app
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
+from datetime import timedelta
 
 auth_blueprint = Blueprint('auth_blueprint', __name__)
 
@@ -29,7 +30,7 @@ def create_token():
             isSeller = False
 
         # Create a new token with the user id inside
-        access_token = create_access_token(identity=user['id'])
+        access_token = create_access_token(identity=user['id'], expires_delta=timedelta(hours=1))
         return jsonify({"token": access_token, "id": user['id'], "isSeller": isSeller})
     except IndexError:
         # Invalid username or password

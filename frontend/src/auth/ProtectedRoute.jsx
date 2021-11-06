@@ -1,9 +1,8 @@
-import React from 'react';
 import { Redirect, Route } from 'react-router-dom';
 
 const ProtectedRoute = props => {
 
-    const { auth: auth, component: Component, ...rest } = props;
+    const { auth, component: Component, ...rest } = props;
 
     // Load component if auth, otherwise push to login
     return (

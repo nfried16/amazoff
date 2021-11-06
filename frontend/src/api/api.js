@@ -40,6 +40,18 @@ export const GetUser = async (token, id) => {
     return data;
 }
 
+export const EditUser = async (token, user) => {
+	const { data } = await client.patch("/user",
+		user,
+		{
+			headers: {
+				'Authorization': `Bearer ${token}`
+			}
+		});
+	printOutput && console.log(data);
+	return data;
+};
+
 /* ---------- PRODUCTS ---------- */
 export const GetProductById = async (token, id) => {
     const { data } = await client.get(`/product/${id}`, {
@@ -57,6 +69,43 @@ export const GetSellers = async (token, id) => {
             'Authorization': `Bearer ${token}`
         }
     });
+    printOutput && console.log(data);
+    return data;
+}
+
+export const CreateProduct = async (token, formData) => {
+    const { data } = await client.post(`/product`, 
+        formData,
+        {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        }
+    );
+    printOutput && console.log(data);
+    return data;
+}
+
+export const SearchProducts = async (token, search) => {
+    const { data } = await client.get(`/product?search=${search}`,
+        {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        }
+    );
+    printOutput && console.log(data);
+    return data;
+}
+
+export const GetCategories = async (token) => {
+    const { data } = await client.get(`/categories`, 
+        {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }   
+        }
+    );
     printOutput && console.log(data);
     return data;
 }

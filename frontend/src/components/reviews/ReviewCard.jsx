@@ -1,4 +1,3 @@
-import React from 'react';
 import { Rate } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
 

@@ -45,7 +45,6 @@ function App() {
 		)
 	}
 
-	console.log(auth);
 	return (
 		<Router>
 			<Route path='/(home|cart|user|product|order|search)' component={NavBar} />

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { withRouter } from 'react-router-dom';
 import { GetSellerReviews, GetUser } from '../../api/api';
 import EditUser from './EditUser';
@@ -11,8 +11,10 @@ const UserAccount = props => {
     const [reviews, setReviews] = useState([])
 
     useEffect(() => {
-        // Use to check if this page is the current user
-        const currentUser = localStorage.getItem('id');
+        updateUser();
+    }, [])
+
+    const updateUser = () => {
         const userId = props.match.params.id;
         GetUser(localStorage.getItem('token'), userId)
             .then(res => {
@@ -26,7 +28,7 @@ const UserAccount = props => {
                 setLoading(false);
                 console.log(err);
             })
-    }, [])
+    }
 
     const getReviews = async () => {
         const sellerId = props.match.params.id;
@@ -35,6 +37,11 @@ const UserAccount = props => {
         setReviews(reviews);
     }
     
+    // This user is a seller
+    const isSeller = !loading && user && !!user.products;
+    // This is the logged in user
+    const isSelf = !loading && user && localStorage.getItem('id') == user.id;
+
     return (
         <div style = {{ marginTop: '10vh', paddingBottom: '10vh', width: '100%', display: 'flex', justifyContent: 'center'}}>
             {loading ? (
@@ -49,20 +56,24 @@ const UserAccount = props => {
                 (
                     <div style = {{width: '75%', display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
                         <div style = {{fontSize: '2rem', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%'}}>
-                            <span style = {{marginRight: '1%', justifySelf: 'center'}}>
+                            <span style = {{justifySelf: 'center'}}>
                                 {user.first_name + " " + user.last_name}
                             </span>
-                            <EditUser 
-                                user = {user}
-                                style = {{marginLeft: '1%'}}
-                            />
+                            {isSelf && (
+                                <div style = {{marginLeft: '2%', display: 'flex', alignItems: 'center'}}>
+                                    <EditUser 
+                                        updatePage = {updateUser}
+                                        user = {user}
+                                    />
+                                </div>
+                            )}
                         </div>
                         <div>
                             Account #: {user.id}
                         </div>
                         {
                             // Info only for sellers and self:
-                            (user.products || user.id == localStorage.getItem('id')) && (
+                            (isSeller || isSelf) && (
                                 <>
                                 <div>Email: {user.email}</div>
                                 <div>Address: {user.address}</div>
@@ -71,13 +82,13 @@ const UserAccount = props => {
                         }
                         {
                             // Info only for self:
-                            (user.id == localStorage.getItem('id')) && (
+                            isSelf && (
                                 <div>Balance: {user.balance}</div>
                             )
                         }
                         { 
                             // Info only for sellers (reviews)
-                            user.products && (
+                            isSeller && (
                                 <>
                                 <div style ={{marginTop: '10vh', fontSize: '2rem'}}>
                                     Reviews

@@ -11,7 +11,7 @@ social_blueprint = Blueprint('social_blueprint', __name__)
 def get_seller_reviews(id):
 
     reviews = app.db.execute('''
-    SELECT Users.first_name, Users.last_name, UserReview.title, UserReview.rating, UserReview.date, UserReview.description
+    SELECT Users.first_name, Users.last_name, UserReview.title, UserReview.rating, UserReview.date, UserReview.description, Users.id
     FROM UserReview, Users
     WHERE UserReview.seller_id = :id
         AND Users.id=UserReview.user_id
@@ -24,7 +24,7 @@ def get_seller_reviews(id):
 def get_product_reviews(id):
 
     reviews = app.db.execute('''
-    SELECT Users.first_name, Users.last_name, ProductReview.title, ProductReview.rating, ProductReview.date, ProductReview.description
+    SELECT Users.first_name, Users.last_name, ProductReview.title, ProductReview.rating, ProductReview.date, ProductReview.description, Users.id
     FROM ProductReview, Users
     WHERE ProductReview.product_id = :id
         AND Users.id=ProductReview.user_id
