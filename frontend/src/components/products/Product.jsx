@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react';
 import { withRouter } from 'react-router-dom';
 import { GetProductById, GetProductReviews, GetSellers } from '../../api/api';
-import { Button, Table } from 'antd';
-import { ShoppingCartOutlined } from '@ant-design/icons';
+import AddToCart from './AddToCart';
+import EditProduct from './EditProduct';
+import StartSelling from './StartSelling';
+import { Table, Select } from 'antd';
 import ReviewCard from '../reviews/ReviewCard';
 
 const Product = props => {
@@ -11,14 +13,18 @@ const Product = props => {
     const [product, setProduct] = useState(null);
     const [sellers, setSellers] = useState([]);
     const [reviews, setReviews] = useState([]);
+    const [loadingCart, setLoadingCart] = useState(null);
 
     useEffect(() => {
-        const productId = props.match.params.id;
-        GetProductById(localStorage.getItem('token'), productId)
+        setLoading(true);
+        getProduct()
             .then(async res => {
-                setProduct(res);
-                await getSellers();
-                await getReviews();
+                await Promise.all(
+                    [
+                        getSellers(),
+                        getReviews()
+                    ]
+                );
                 setLoading(false);
             })
             .catch(err => {
@@ -26,21 +32,42 @@ const Product = props => {
             })
     }, [props.match.params.id])
 
+    const isSeller = product && localStorage.getItem('isSeller') === 'true';
+    const canSell = isSeller && !sellers.some(seller => seller.id == localStorage.getItem('id'));
+    const isCreator = product && product.creator == localStorage.getItem('id');
+    const productId = props.match.params.id;
+
+    const getProduct = async () => {
+        await GetProductById(localStorage.getItem('token'), productId)
+            .then(async res => {
+                setProduct(res);
+            })
+    }
+
     const getSellers = async () => {
-        const productId = props.match.params.id;
         await GetSellers(localStorage.getItem('token'), productId)
             .then(res => {
-                setSellers(res);
+                setSellers(res.map(row => {
+                    row.key = row.id
+                    row.qty = 1; 
+                    return row;
+                }));
             })
     }
 
     const getReviews = async () => {
-        const productId = props.match.params.id;
         await GetProductReviews(localStorage.getItem('token'), productId)
             .then(res => {
                 setReviews(res);
             })
     }
+
+    const options = Array.from(
+        {length: 10}, 
+        (_, i) => {
+            return {value: i+1}
+        }
+    )
 
     const columns = [
         {
@@ -55,16 +82,26 @@ const Product = props => {
         },
         { title: 'Price', key: 'price', dataIndex: 'price' },
         { title: 'Amount in stock', key: 'amt_in_stock', dataIndex: 'amt_in_stock' },
+        { 
+            title: 'Qty: ', key: 'qty', dataIndex: 'qty', 
+            render: (text, record) => (
+                <Select 
+                    options={options} 
+                    defaultValue={1}
+                    onChange = {val => {
+                        record.qty = val
+                    }}
+                />
+            ),
+        },
         {
             title: 'Add to cart', key: 'add', dataIndex: 'add',
             render: (text, record) => (
-                <Button onClick={() => console.log(record)}
-                    icon={<ShoppingCartOutlined />}
-                />
+                <AddToCart product_id={productId} record={record}/>
             ),
         }
     ];
-
+    
     return (
         <div style = {{marginTop: '10vh', width: '100%', display: 'flex', justifyContent: 'center'}}>
             {
@@ -80,8 +117,18 @@ const Product = props => {
                                 <div style = {{width: '5%'}}>
                                 </div>
                                 <div style={{ width: '47.6%', height: '100%', background: '#EAEDED', display: 'flex', alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'column', padding: '2%', borderRadius: '0px 5px 5px 0px' }}>
-                                    <div style={{ fontSize: '2rem' }}>
-                                        {product.name}
+                                    <div style={{ fontSize: '2rem', display: 'flex', alignItems: 'center', width: '100%', justifyContent: 'center' }}>
+                                        <div>
+                                            {product.name}
+                                        </div>
+                                        {isCreator && (
+                                            <div style = {{marginLeft: '3%', display: 'flex', alignItems: 'center'}}>
+                                                <EditProduct 
+                                                    product={product}
+                                                    reloadProduct={getProduct}
+                                                />
+                                            </div>
+                                        )}
                                     </div>
                                     <div style={{ marginTop: '-1%' }}>
                                         {product.category}
@@ -95,8 +142,18 @@ const Product = props => {
                                 </div>
                             </div>
                             <div style = {{width: '100%', display: 'flex', alignItems: 'center', flexDirection: 'column'}}>
-                                <div style = {{marginTop: '10vh', marginBottom: '4vh', fontSize: '2rem'}}>
-                                    Sellers
+                                <div style = {{marginTop: '10vh', marginBottom: '4vh', fontSize: '2rem', display: 'flex', justifyContent: 'center', width: '100%'}}>
+                                    <div>
+                                        Sellers
+                                    </div>
+                                    {canSell && (
+                                        <div style = {{marginLeft: '1%', display: 'flex', alignItems: 'center'}}>
+                                            <StartSelling 
+                                                product={product}
+                                                reloadSellers={getSellers}
+                                            />
+                                        </div>
+                                    )}
                                 </div>
                                 <Table columns={columns} dataSource = {sellers} pagination = {false}
                                     style = {{width: '100%'}}

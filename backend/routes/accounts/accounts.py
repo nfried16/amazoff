@@ -21,14 +21,6 @@ def get_user(id):
                 FROM Seller
                 WHERE id=:id
                 ''', id=id)) > 0
-        if(isSeller):
-            products = app.db.execute('''
-                SELECT Product.name, SellerProduct.amt_in_stock, SellerProduct.price
-                FROM SellerProduct, Product
-                WHERE SellerProduct.seller_id=:id 
-                    AND SellerProduct.product_id=Product.id
-                ''', id=id)
-            user['products'] = products
         return user
     except IndexError:
         return 'User does not exist', 400
@@ -52,8 +44,11 @@ def edit_user():
             email = :email,
             address = :address,
             balance = :balance
-        WHERE id = :id;
-        ''', id = user_id, first_name=first_name, last_name=last_name, email=email, address=address, balance=balance)
+            WHERE id = :id
+            RETURNING id
+        ''', id = user_id, first_name=first_name, last_name=last_name, email=email, address=address, balance=balance)[0]
+
+        app.db.session.commit()
 
         user = app.db.execute('''
         SELECT *
@@ -63,5 +58,6 @@ def edit_user():
 
         return user
     except IndexError:
+        app.db.session.rollback()
         return 'Invalid updates', 400
 

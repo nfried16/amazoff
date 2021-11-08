@@ -15,6 +15,7 @@ import NavBar from './components/extras/NavBar';
 import Product from './components/products/Product';
 import Order from './components/orders/Order';
 import ProductList from './components/search/ProductList';
+import SellerProducts from './components/products/SellerProducts';
 import 'antd/dist/antd.css';
 import './App.css';
 
@@ -47,7 +48,7 @@ function App() {
 
 	return (
 		<Router>
-			<Route path='/(home|cart|user|product|order|search)' component={NavBar} />
+			<Route path='/(home|cart|user|product|order|search|products)' component={NavBar} />
 			<Switch>
 				<Redirect exact from='/' to='/home' />
 				<Route exact path='/login' component={() => <Login setAuth={setAuth}/>} />
@@ -56,6 +57,7 @@ function App() {
 				<ProtectedRoute exact auth={auth} path='/cart' component={Cart} />
 				<ProtectedRoute exact auth={auth} path='/user/:id' component={UserAccount} />
 				<ProtectedRoute exact auth={auth} path='/product/:id' component = {Product} />
+				<ProtectedRoute exact auth={auth} path='/products' component={SellerProducts} />
 				<ProtectedRoute exact auth={auth} path='/search' component={ProductList} />
 				<Redirect from='*' to='/home' />
 			</Switch>

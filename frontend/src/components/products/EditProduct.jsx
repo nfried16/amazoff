@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import { Modal, Form, Input, InputNumber, Menu, Select } from 'antd';
-import { CreateProduct as create, GetCategories } from '../../api/api';
+import { Button, Modal, Form, Input, InputNumber, Upload, Select } from 'antd';
+import { EditProduct as edit, GetCategories } from '../../api/api';
 import { SkinOutlined, UploadOutlined, EditOutlined } from '@ant-design/icons';
 import { withRouter } from 'react-router';
 
@@ -24,6 +24,10 @@ const EditProduct = props => {
 			});
 	}, [])
 
+	useEffect(() => {
+		form.setFieldsValue(props.product);
+	}, [props.product])
+
 	const onOk = () => {
 		form.validateFields()
 		.then(async values => {
@@ -38,17 +42,14 @@ const EditProduct = props => {
 	const uploadData = async (values) => {
 		const formData = new FormData();
 		formData.append('name', values.name);
-		formData.append('image', values.image.file.originFileObj);
+		// formData.append('image', values.image.file.originFileObj);
 		formData.append('description', values.description);
 		formData.append('category', values.category);
-        formData.append('price', values.price);
-        formData.append('amt_in_stock', values.amt_in_stock);
-        const res = await create(localStorage.getItem('token'), formData);
-        props.history.push(`/product/${res}`);
+		const res = await edit(localStorage.getItem('token'), formData, props.product.id)
+			.then(res => props.reloadProduct())
 	}
 
 	const onCancel = () => {
-		form.resetFields();
 		setVisible(false);
 	}
 
@@ -59,15 +60,15 @@ const EditProduct = props => {
 		setFileList(fileList);
 	};
 
+
     return (
         <>
-            <Menu.Item
-				key='create'
-                onClick={() => setVisible(!visible)}
-            >
-				Create Product
-			</Menu.Item>
-			<Modal title='Create Product'
+			<Button 
+				size = 'small'
+				onClick={() => setVisible(!visible)} 
+				icon = {<EditOutlined/>}
+			/>
+			<Modal title='Edit Product'
 				visible={visible}
 				onCancel={onCancel}
 				onOk={onOk}
@@ -104,12 +105,6 @@ const EditProduct = props => {
 							)}
 						</Select>
 					</Form.Item>
-                    <Form.Item name="price" label="Price" rules={[{ required: true }]}>
-                        <InputNumber precision = {2} min ={0} />
-                    </Form.Item>
-                    <Form.Item name="amt_in_stock" label="Stock" rules={[{ required: true }]}>
-                        <InputNumber precision = {0} min ={0} />
-                    </Form.Item>
 				</Form>
 			</Modal>
       	</>

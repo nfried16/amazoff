@@ -10,6 +10,11 @@ const UserAccount = props => {
     const [user, setUser] = useState(null);
     const [reviews, setReviews] = useState([])
 
+    // This user is a seller
+    const isSeller = localStorage.getItem('isSeller') === 'true';
+    // This is the logged in user
+    const isSelf = !loading && user && localStorage.getItem('id') == user.id;
+
     useEffect(() => {
         updateUser();
     }, [])
@@ -19,7 +24,7 @@ const UserAccount = props => {
         GetUser(localStorage.getItem('token'), userId)
             .then(res => {
                 setUser(res);
-                if(res.products) {
+                if(isSeller) {
                     getReviews();
                 }
                 setLoading(false);
@@ -36,11 +41,6 @@ const UserAccount = props => {
             .catch(err => [])
         setReviews(reviews);
     }
-    
-    // This user is a seller
-    const isSeller = !loading && user && !!user.products;
-    // This is the logged in user
-    const isSelf = !loading && user && localStorage.getItem('id') == user.id;
 
     return (
         <div style = {{ marginTop: '10vh', paddingBottom: '10vh', width: '100%', display: 'flex', justifyContent: 'center'}}>

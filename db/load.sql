@@ -41,26 +41,30 @@ INSERT INTO CartItem VALUES(
         4
     );
 
+-- Orders
+INSERT INTO Orders(user_id)
+    VALUES(2);
+
 -- OrderItem
-INSERT INTO OrderItem(user_id, seller_id, product_id, amount, price)
+INSERT INTO OrderItem(seller_id, product_id, amount, price, order_id)
     VALUES(
-        (SELECT id FROM Users WHERE email='keith@gmail.com'), 
-        (SELECT id FROM Seller), 
-        (SELECT id FROM Product WHERE name='Ball'), 
+        1, 
+        1,
         4,
-        45.40
+        45.40,
+        1
     );
 
 -- UserReview
 INSERT INTO UserReview(user_id, seller_id, rating, title, description, date)
     VALUES
-    ((SELECT id FROM Users WHERE email='keith@gmail.com'), (SELECT id FROM Users WHERE email='natty@gmail.com'), 1, 'Garbo human', 'All of Nattys products are garbo', '2021-10-07 10:00:00'),
-    ((SELECT id FROM Users WHERE email='niam@gmail.com'), (SELECT id FROM Users WHERE email='natty@gmail.com'), 5, 'Love him', 'All of Nattys products are fantastic', '2021-10-08 10:00:00');
+    ((SELECT id FROM Users WHERE email='keith@gmail.com'), (SELECT id FROM Users WHERE email='natty@gmail.com'), 1, 'Garbo human', 'All of Nattys products are garbo', '2021-10-07'),
+    ((SELECT id FROM Users WHERE email='niam@gmail.com'), (SELECT id FROM Users WHERE email='natty@gmail.com'), 5, 'Love him', 'All of Nattys products are fantastic', '2021-10-08');
     
 -- ProductReview
 INSERT INTO ProductReview(user_id, product_id, rating, title, description, date)
     VALUES
-    ((SELECT id FROM Users WHERE email='natty@gmail.com'), (SELECT id FROM Product WHERE name='Ball'), 3, 'This ball sucks', 'This ball really sucks man wish I aint buy it', '2021-10-07 10:00:00'),
-    ((SELECT id FROM Users WHERE email='niam@gmail.com'), (SELECT id FROM Product WHERE name='Ball'), 1, 'This product SUCKS!', 'This thing literally exploded when I used it.', '2021-10-07 10:00:00' ),
-    ((SELECT id FROM Users WHERE email='keith@gmail.com'), (SELECT id FROM Product WHERE name='Ball'), 5, 'This product is AMAZING!', 'This thing literally saved my marriage.', '2021-10-08 10:00:00' ),
-    ((SELECT id FROM Users WHERE email='anisha@gmail.com'), (SELECT id FROM Product WHERE name='Ball'), 3, 'Meh it was okay', 'It worked for like 3 days and then broke', '2021-10-08 10:00:00' );
+    ((SELECT id FROM Users WHERE email='natty@gmail.com'), (SELECT id FROM Product WHERE name='Ball'), 3, 'This ball sucks', 'This ball really sucks man wish I aint buy it', '2021-10-07'),
+    ((SELECT id FROM Users WHERE email='niam@gmail.com'), (SELECT id FROM Product WHERE name='Ball'), 1, 'This product SUCKS!', 'This thing literally exploded when I used it.', '2021-10-07'),
+    ((SELECT id FROM Users WHERE email='keith@gmail.com'), (SELECT id FROM Product WHERE name='Ball'), 5, 'This product is AMAZING!', 'This thing literally saved my marriage.', '2021-10-08'),
+    ((SELECT id FROM Users WHERE email='anisha@gmail.com'), (SELECT id FROM Product WHERE name='Ball'), 3, 'Meh it was okay', 'It worked for like 3 days and then broke', '2021-10-08');

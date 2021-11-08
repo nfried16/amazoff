@@ -11,9 +11,8 @@ dbname=$DB_NAME
 echo $dbname
 if [[ -n `psql -lqt | cut -d \| -f 1 | grep -w "$dbname"` ]]; then
     dropdb $dbname
-    echo HERE
 fi
 createdb $dbname
 
-# psql -af create.sql $dbname
-# psql -af load.sql $dbname
+psql -af create.sql $dbname
+psql -af load.sql $dbname

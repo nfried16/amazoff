@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import Logo from '../../assets/amazon_white.png';
 import { Link, withRouter } from 'react-router-dom';
-import { Input, Button } from 'antd';
+import { Input, Button, Dropdown, Menu } from 'antd';
 import CreateProduct from '../products/CreateProduct';
-import { SearchOutlined, UserOutlined, ShoppingCartOutlined, LogoutOutlined } from '@ant-design/icons';
+import { SearchOutlined, UserOutlined, ShoppingCartOutlined, LogoutOutlined, SkinOutlined } from '@ant-design/icons';
 
 const NavBar = props => {
 
@@ -38,7 +38,30 @@ const NavBar = props => {
         props.history.push('/cart');
     }
 
+    const toOrders = () => {
+        props.history.push('/orders');
+    }
+
+    const toProducts = () => {
+        props.history.push('/products');
+    }
+
     const isSeller = localStorage.getItem('isSeller') === 'true';
+
+    const sellerMenu = (
+        <Menu>
+            <CreateProduct/>
+            <Menu.Item key='products' onClick={toProducts}>View My Products</Menu.Item>
+            <Menu.Item key='orders' onClick={toProducts}>View Orders</Menu.Item>
+        </Menu>
+    );
+
+    const cartMenu = (
+        <Menu>
+            <Menu.Item key='cart' onClick={toCart}>Cart</Menu.Item>
+            <Menu.Item key='orders' onClick={toOrders}>Orders</Menu.Item>
+        </Menu>
+    );
 
     return (
         <div style={{ position: 'relative', height: '12vh', width: '100%', background: '#131921', display: 'flex', alignItems: 'center'}}>
@@ -54,15 +77,25 @@ const NavBar = props => {
                 style={{ height: '6vh', width: '6vh', background: '#FEBD69', borderRadius: '0px 5px 5px 0px', borderWidth: '0px'}}
                 onClick = {onSearch}
             />
-            {isSeller && <CreateProduct/>}
+            {isSeller && (
+                <Dropdown overlay={sellerMenu}>
+                    <Button 
+                        type='ghost' icon={<SkinOutlined style={{color: 'white', fontSize: '150%'}} />}
+                        style={{ height: '6vh', width: '6vh', marginLeft: 'auto', marginRight: '2%', borderRadius: '5px'}}
+                    />
+                </Dropdown>
+            )}
             <Button type='ghost' icon={<UserOutlined style={{ color: 'white', fontSize: '150%' }} />}
                 style={{ height: '6vh', width: '6vh', marginRight: '2%', borderRadius: '5px', marginLeft: !isSeller && 'auto'}}
                 onClick={toAccount}
             />
-            <Button type='ghost' icon={<ShoppingCartOutlined style={{color: 'white', fontSize: '150%'}} />}
-                style={{ height: '6vh', width: '6vh', marginRight: '2%', borderRadius: '5px' }}
-                onClick={toCart}
-            />
+            <Dropdown
+                overlay={cartMenu}
+            >
+                <Button type='ghost' icon={<ShoppingCartOutlined style={{color: 'white', fontSize: '150%'}} />}
+                    style={{ height: '6vh', width: '6vh', marginRight: '2%', borderRadius: '5px' }}
+                />
+            </Dropdown>
             <Button type='ghost' icon={<LogoutOutlined style={{ color: 'white', fontSize: '150%' }} />}
                 style={{ height: '6vh', width: '6vh', marginRight: '5%', borderRadius: '5px' }}
                 onClick={logout}

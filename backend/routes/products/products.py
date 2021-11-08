@@ -24,6 +24,52 @@ def get_product_by_id(id):
     except IndexError:
         return 'Product does not exist', 400
 
+# Get products for a particular seller
+@products_blueprint.route('/product/seller', methods=['GET'])
+@jwt_required()
+def get_products_for_seller():
+
+    seller_id = get_jwt_identity()
+
+    try:
+        products = app.db.execute('''
+        SELECT SellerProduct.*, Product.name
+        FROM SellerProduct, Product
+        WHERE SellerProduct.seller_id=:seller_id
+            AND SellerProduct.product_id=Product.id
+        ''', seller_id=seller_id)
+    
+        return jsonify(products)
+    except:
+        return 'Product does not exist', 400
+
+# Edit a seller product
+@products_blueprint.route('/product/seller/<string:id>', methods=['PATCH'])
+@jwt_required()
+def edit_seller_product(id):
+
+    print(request.form)
+
+    seller_id = get_jwt_identity()
+    price = request.form['price']
+    amt_in_stock = request.form['amt_in_stock']
+    print(seller_id, id, price, amt_in_stock)
+
+    try:
+        product = app.db.execute('''
+        UPDATE SellerProduct
+        SET price=:price,
+            amt_in_stock=:amt_in_stock
+        WHERE SellerProduct.seller_id=:seller_id
+            AND SellerProduct.product_id=:product_id
+        RETURNING product_id
+        ''', price=price, amt_in_stock=amt_in_stock, seller_id=seller_id, product_id=id)[0]
+        app.db.session.commit()
+    
+        return jsonify(product)
+    except:
+        return 'Invalid updates', 400
+
 
 # Get sellers of a particular product
 @products_blueprint.route('/product/<string:id>/sellers', methods=['GET'])
@@ -56,8 +102,7 @@ def create_product():
     # Create Product
     product_id = app.db.execute('''
         INSERT INTO Product(name, description, image, category, creator)
-        VALUES
-        (:name, :description, :image, :category, :seller_id) 
+        VALUES(:name, :description, :image, :category, :seller_id) 
         RETURNING id
         ''', name=name, description=description, image=image, category=category, seller_id=seller_id)[0]['id']
 
@@ -67,6 +112,51 @@ def create_product():
         VALUES(:seller_id, :product_id, :amt_in_stock, :price)
         RETURNING seller_id
         ''', seller_id=seller_id, product_id=product_id, amt_in_stock=amt_in_stock, price=price)
+    app.db.session.commit()
+
+    return jsonify(product_id)
+
+# Edit product
+@products_blueprint.route('/product/<string:id>', methods=['PATCH'])
+@jwt_required()
+def edit_product(id):
+
+    seller_id = get_jwt_identity()
+
+    name = request.form['name']
+    description = request.form['description']
+    category = request.form['category']
+
+    # Edit Product
+    product_id = app.db.execute('''
+        UPDATE Product
+        SET name=:name,
+            description=:description,
+            category=:category
+        WHERE id=:product_id
+        RETURNING id
+        ''', product_id=id, name=name, description=description, category=category)[0]
+    app.db.session.commit()
+
+    return jsonify(product_id)
+
+# Start selling product
+@products_blueprint.route('/product/<string:id>', methods=['POST'])
+@jwt_required()
+def start_selling(id):
+
+    seller_id = get_jwt_identity()
+
+    price = request.form['price']
+    amt_in_stock = request.form['amt_in_stock']
+
+    # Start Selling Product
+    product_id = app.db.execute('''
+        INSERT INTO SellerProduct
+            VALUES(:seller_id, :product_id, :amt_in_stock, :price) 
+        RETURNING product_id
+        ''', seller_id=seller_id, product_id=id, amt_in_stock=amt_in_stock, price=price)
+    app.db.session.commit()
 
     return jsonify(product_id)
 

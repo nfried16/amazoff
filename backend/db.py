@@ -1,13 +1,12 @@
-from sqlalchemy import create_engine, text
+from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import text
 
 class DB:
     """Hosts all functions for querying the database."""
 
     def __init__(self, app):
-        self.engine = create_engine(app.config['SQLALCHEMY_DATABASE_URI'])
-
-    def connect(self):
-        return self.engine.connect()
+        db = SQLAlchemy(app)
+        self.session = db.session
 
     def execute(self, sqlstr, **kwargs):
         """Execute sqlstr and return a list of result tuples.  sqlstr will be
@@ -19,7 +18,6 @@ class DB:
         https://docs.sqlalchemy.org/en/14/core/connections.html#sqlalchemy.engine.CursorResult
         for additional details.  See models/*.py for examples of
         calling this function."""
-        with self.engine.connect() as conn:
-            res = conn.execute(text(sqlstr), kwargs).fetchall()
-            return [dict(row) for row in res]
+        res = self.session.execute(text(sqlstr), kwargs).fetchall()
+        return [dict(row) for row in res]
 

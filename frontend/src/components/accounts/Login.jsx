@@ -32,7 +32,7 @@ const Login = props => {
     
     return (
         <div style = {{width: '100vw', height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
-            <Form {...layout} form={form} name="control-hooks" onFinish={onFinish}>
+            <Form {...layout} form={form} name="login" onFinish={onFinish}>
                 <Form.Item name="email" label="Email" rules={[{ required: true }]}>
                     <Input />
                 </Form.Item>

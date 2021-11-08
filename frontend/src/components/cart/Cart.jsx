@@ -1,21 +1,36 @@
 import { useEffect, useState } from 'react';
-import { Button, Row, Table } from 'antd';
-import { GetCart } from '../../api/api';
+import { withRouter } from 'react-router-dom';
+import { Button, Table, Select, message } from 'antd';
+import { GetCart, Order, EditCartItem } from '../../api/api';
+import RemoveFromCart from './RemoveFromCart';
 
 const Cart = props => {
     const [cart, setCart] = useState(null);
 
 
     useEffect(() => {
-        GetCart(localStorage.getItem('token'))
-            .then(res => {
-                setCart(res);
-            })
-            .catch(err => {
-
-            })
+        updateCart();
     }, [])
 
+    const updateCart = () => {
+        GetCart(localStorage.getItem('token'))
+        .then(res => {
+            setCart(res.map(row => {
+                row.key = row.id + '-' + row.seller_id;
+                return row;
+            }));
+        })
+        .catch(err => {
+            
+        })
+    }
+
+    const options = Array.from(
+        {length: 10}, 
+        (_, i) => {
+            return {value: i+1}
+        }
+    )
 
     const columns = [
         {
@@ -31,25 +46,45 @@ const Cart = props => {
             )
         },
         {
-            title: 'Seller',
-            dataIndex: 'seller_id',
-            key: 'seller_id',
+            title: 'Seller', dataIndex: 'seller_id', key: 'seller_id',
+            render: (text, record) => (
+                <div style={{ color: '#007185', cursor: 'pointer' }}
+                    onClick={() => props.history.push(`/user/${record.seller_id}`)}
+                >
+                    {`${record.first_name} ${record.last_name}`}
+                </div>
+            )
+        },
+        { title: 'Price', dataIndex: 'price', key: 'price' },
+        { title: 'Amount', dataIndex: 'amount', key: 'amount',
+            render: (text, record) => (
+                <Select 
+                    options={options} 
+                    defaultValue={record.amount}
+                    onChange = {val => {
+                        EditCartItem(localStorage.getItem('token'), record.id, record.seller_id, val)
+                        record.amount = val
+                    }}
+                />
+            ),
         },
         {
-            title: 'Price',
-            dataIndex: 'price',
-            key: 'price',
+            title: 'Remove', dataIndex: 'remove', key: 'remove',
+            render: (text, record) => (
+                <RemoveFromCart record={record} updateCart={updateCart}/>
+            )
         },
-        {
-            title: 'Amount',
-            dataIndex: 'amount',
-            key: 'amount',
-        }
     ];
 
     const onSubmit = () => {
-        console.log('Submit order');
-        // Make API call
+        Order(localStorage.getItem('token'))
+            .then(res => {
+                console.log(res);
+                updateCart();
+            })
+            .catch(err => {
+                message.warning(err.response.data);
+            })
     }
 
     if(!cart) {
@@ -80,6 +115,7 @@ const Cart = props => {
                             <Table.Summary.Cell/>
                             <Table.Summary.Cell>{total}</Table.Summary.Cell>
                             <Table.Summary.Cell/>
+                            <Table.Summary.Cell/>
                         </Table.Summary.Row>
                     )
                 }}
@@ -95,4 +131,4 @@ const Cart = props => {
     );
 }
 
-export default Cart;
+export default withRouter(Cart);

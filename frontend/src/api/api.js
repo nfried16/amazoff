@@ -63,6 +63,16 @@ export const GetProductById = async (token, id) => {
     return data;
 }
 
+export const GetProductsBySeller = async (token) => {
+    const { data } = await client.get(`/product/seller`, {
+        headers: {
+            'Authorization': `Bearer ${token}`
+        }
+    });
+    printOutput && console.log(data);
+    return data;
+}
+
 export const GetSellers = async (token, id) => {
     const { data } = await client.get(`/product/${id}/sellers`, {
         headers: {
@@ -75,6 +85,45 @@ export const GetSellers = async (token, id) => {
 
 export const CreateProduct = async (token, formData) => {
     const { data } = await client.post(`/product`, 
+        formData,
+        {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        }
+    );
+    printOutput && console.log(data);
+    return data;
+}
+
+export const EditProduct = async (token, formData, productId) => {
+    const { data } = await client.patch(`/product/${productId}`, 
+        formData,
+        {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        }
+    );
+    printOutput && console.log(data);
+    return data;
+}
+
+export const EditSellerProduct = async (token, formData, productId) => {
+    const { data } = await client.patch(`/product/seller/${productId}`, 
+        formData,
+        {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        }
+    );
+    printOutput && console.log(data);
+    return data;
+}
+
+export const StartSelling = async (token, formData, productId) => {
+    const { data } = await client.post(`/product/${productId}`, 
         formData,
         {
             headers: {
@@ -113,6 +162,56 @@ export const GetCategories = async (token) => {
 /* ---------- Cart ---------- */
 export const GetCart = async (token) => {
     const { data } = await client.get(`/cart`, {
+        headers: {
+            'Authorization': `Bearer ${token}`
+        }
+    });
+    printOutput && console.log(data);
+    return data;
+}
+
+export const AddToCart = async (token, sellerProduct) => {
+    const { data } = await client.post(`/cart`, 
+        sellerProduct,
+        {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        }
+    );
+    printOutput && console.log(data);
+    return data;
+}
+
+export const RemoveFromCart = async (token, product_id, seller_id) => {
+    const { data } = await client.delete(`/cart/${product_id}/${seller_id}`, 
+        {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        }
+    );
+    printOutput && console.log(data);
+    return data;
+}
+
+export const EditCartItem = async (token, product_id, seller_id, amount) => {
+    const { data } = await client.patch(`/cart/${product_id}/${seller_id}`, 
+        {
+            amount: amount
+        },
+        {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        }
+    );
+    printOutput && console.log(data);
+    return data;
+}
+
+export const Order = async (token) => {
+    const { data } = await client.post(`/cart/order`, null, {
         headers: {
             'Authorization': `Bearer ${token}`
         }
