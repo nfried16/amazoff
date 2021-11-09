@@ -1,6 +1,6 @@
-import {Login as login} from '../../api/api';
+import { Register as register } from '../../api/api';
 import { withRouter } from 'react-router-dom';
-import { Form, Input, Button } from 'antd';
+import { Form, Input, Button, Checkbox } from 'antd';
 
 const layout = {
     labelCol: { span: 8 },
@@ -10,12 +10,12 @@ const tailLayout = {
     wrapperCol: { offset: 8, span: 16 },
 };
 
-const Login = props => {
+const Register = props => {
 
     const [form] = Form.useForm();
 
-    const onFinish = () => {
-        login(form.getFieldValue('email'), form.getFieldValue('password'))
+    const onFinish = values => {
+        register(values.email, values.password, values.firstName, values.lastName, values.address, !!values.isSeller)
             .then(res => {
                 // Just using localStorage instead of context
                 localStorage.setItem('token', res.token);
@@ -39,9 +39,21 @@ const Login = props => {
                 <Form.Item name="password" label="Password" rules={[{ required: true }]}>
                     <Input />
                 </Form.Item>
+                <Form.Item name="firstName" label="First Name" rules={[{ required: true }]}>
+                    <Input />
+                </Form.Item>
+                <Form.Item name="lastName" label="Last Name" rules={[{ required: true }]}>
+                    <Input />
+                </Form.Item>
+                <Form.Item name="address" label="Address" rules={[{ required: true }]}>
+                    <Input />
+                </Form.Item>
+                <Form.Item name="isSeller" label="Seller" valuePropName="checked">
+                    <Checkbox />
+                </Form.Item>
                 <Form.Item {...tailLayout}>
                     <Button type="primary" htmlType="submit">
-                        Log in
+                        Register
                     </Button>
                 </Form.Item>
             </Form>
@@ -49,4 +61,4 @@ const Login = props => {
     )
 }
 
-export default withRouter(Login);
+export default withRouter(Register);

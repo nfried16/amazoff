@@ -54,7 +54,7 @@ CREATE TABLE OrderItem (
     amount INT NOT NULL,
     price DECIMAL(10,2) NOT NULL,
     order_id INT NOT NULL REFERENCES Orders(id),
-    fulfillDate TIMESTAMP,
+    fulfill_date TIMESTAMP,
     FOREIGN KEY(seller_id, product_id) REFERENCES SellerProduct(seller_id, product_id),
     PRIMARY KEY (order_id, seller_id, product_id)
 );

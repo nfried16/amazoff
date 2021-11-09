@@ -46,13 +46,17 @@ const NavBar = props => {
         props.history.push('/products');
     }
 
+    const toFulfillment = () => {
+        props.history.push('/fulfill');
+    }
+
     const isSeller = localStorage.getItem('isSeller') === 'true';
 
     const sellerMenu = (
         <Menu>
             <CreateProduct/>
             <Menu.Item key='products' onClick={toProducts}>View My Products</Menu.Item>
-            <Menu.Item key='orders' onClick={toProducts}>View Orders</Menu.Item>
+            <Menu.Item key='fulfill' onClick={toFulfillment}>Fulfill Orders</Menu.Item>
         </Menu>
     );
 

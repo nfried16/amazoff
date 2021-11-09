@@ -46,7 +46,7 @@ def add_to_cart():
 
     return jsonify(cart_item)
 
-# Edit item quantity
+# Edit cart item quantity
 @inventory_blueprint.route('/cart/<string:product_id>/<string:seller_id>', methods=['PATCH'])
 @jwt_required()
 def edit_item(product_id, seller_id):
@@ -161,3 +161,84 @@ def order():
         return str(e), 400
 
     return jsonify(order_id)
+
+# Get orders for user
+@inventory_blueprint.route('/orders', methods=['GET'])
+@jwt_required()
+def get_orders():
+
+    user_id = get_jwt_identity()
+
+    orders = app.db.execute('''
+        SELECT Orders.id, Orders.order_date, 
+            SUM(OrderItem.price*OrderItem.amount) as total, COUNT(*), 
+            COUNT(*)-COUNT(OrderItem.fulfill_date)=0 as fulfilled
+            FROM Orders, OrderItem
+            WHERE user_id=:user_id
+                AND Orders.id=OrderItem.order_id
+            GROUP BY Orders.id
+            ORDER BY Orders.id DESC
+    ''', user_id=user_id)
+
+    return jsonify(orders)
+
+# Get orders for seller
+@inventory_blueprint.route('/orders/seller', methods=['GET'])
+@jwt_required()
+def get_seller_orders():
+
+    user_id = get_jwt_identity()
+
+    orders = app.db.execute('''
+        SELECT Orders.order_date, Orders.user_id, Product.name, OrderItem.*, Users.first_name, Users.last_name
+            FROM Orders, OrderItem, Product, Users
+            WHERE Orders.id=OrderItem.order_id
+                AND OrderItem.seller_id=:seller_id
+                AND OrderItem.product_id=Product.id
+                AND Orders.user_id=Users.id
+            ORDER BY Orders.id DESC
+    ''', seller_id=user_id)
+
+    return jsonify(orders)
+
+# Get order by id
+@inventory_blueprint.route('/order/<string:id>', methods=['GET'])
+@jwt_required()
+def get_order(id):
+
+    user_id = get_jwt_identity()
+
+    order_items = app.db.execute('''
+        SELECT Orders.id, Orders.order_date, Orders.user_id, OrderItem.*, Product.name, Users.first_name, Users.last_name
+            FROM OrderItem, Orders, Product, Users
+            WHERE Orders.id=:id
+            AND OrderItem.order_id=Orders.id
+            AND OrderItem.product_id=Product.id
+            AND OrderItem.seller_id=Users.id
+    ''', id=id)
+
+    if order_items[0]['user_id'] != user_id:
+        return 'Invalid permissions', 400
+    
+    return jsonify(order_items)
+
+# Fulfill order
+@inventory_blueprint.route('/order/fulfill', methods=['POST'])
+@jwt_required()
+def fulfill():
+
+    user_id = get_jwt_identity()
+    order_id = request.json['order_id']
+    product_id = request.json['product_id']
+
+    order_item = app.db.execute('''
+        UPDATE OrderItem
+            Set fulfill_date=CURRENT_TIMESTAMP
+            WHERE OrderItem.order_id=:order_id
+                AND OrderItem.seller_id=:user_id
+                AND OrderItem.product_id=:product_id
+            RETURNING order_id, product_id
+        ''', order_id=order_id, user_id=user_id, product_id=product_id)
+    app.db.session.commit()
+    
+    return jsonify(order_item)

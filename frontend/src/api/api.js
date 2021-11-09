@@ -29,6 +29,19 @@ export const Login = async (email, password) => {
     return data;
 };
 
+export const Register = async (email, password, firstName, lastName, address, isSeller) => {
+    const { data } = await client.post('/register', {
+        email: email,
+        first_name: firstName,
+        last_name: lastName,
+        address: address,
+        password: password,
+        is_seller: isSeller
+    });
+    printOutput && console.log(data);
+    return data;
+};
+
 /* ---------- USERS ---------- */
 export const GetUser = async (token, id) => {
     const { data } = await client.get(`/user/${id}`, {
@@ -216,6 +229,52 @@ export const Order = async (token) => {
             'Authorization': `Bearer ${token}`
         }
     });
+    printOutput && console.log(data);
+    return data;
+}
+
+export const GetOrders = async (token) => {
+    const { data } = await client.get(`/orders`, {
+        headers: {
+            'Authorization': `Bearer ${token}`
+        }
+    });
+    printOutput && console.log(data);
+    return data;
+}
+
+export const GetSellerOrders = async (token) => {
+    const { data } = await client.get(`/orders/seller`, {
+        headers: {
+            'Authorization': `Bearer ${token}`
+        }
+    });
+    printOutput && console.log(data);
+    return data;
+}
+
+export const GetOrder = async (token, id) => {
+    const { data } = await client.get(`/order/${id}`, {
+        headers: {
+            'Authorization': `Bearer ${token}`
+        }
+    });
+    printOutput && console.log(data);
+    return data;
+}
+
+export const Fulfill = async (token, order_id, product_id) => {
+    const { data } = await client.post(`/order/fulfill`, 
+        {
+            order_id: order_id,
+            product_id: product_id
+        },
+        {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        }
+    );
     printOutput && console.log(data);
     return data;
 }

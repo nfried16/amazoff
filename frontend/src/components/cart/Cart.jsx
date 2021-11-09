@@ -78,9 +78,9 @@ const Cart = props => {
 
     const onSubmit = () => {
         Order(localStorage.getItem('token'))
-            .then(res => {
-                console.log(res);
-                updateCart();
+            .then(orderId => {
+                message.success('Order submitted!')
+                props.history.push(`/order/${orderId}`);
             })
             .catch(err => {
                 message.warning(err.response.data);
