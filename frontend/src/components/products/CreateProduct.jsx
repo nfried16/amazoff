@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Modal, Form, Input, InputNumber, Menu, Select } from 'antd';
+import { Modal, Form, Input, InputNumber, Menu, Select, Upload, Button } from 'antd';
 import { CreateProduct as create, GetCategories } from '../../api/api';
 import { SkinOutlined, UploadOutlined, EditOutlined } from '@ant-design/icons';
 import { withRouter } from 'react-router';
@@ -80,7 +80,7 @@ const EditProduct = props => {
 					<Form.Item name="name" label="Product Name" rules={[{ required: true }]}>
 						<Input />
 					</Form.Item>
-					{/* <Form.Item name="image" label="Image" rules={[{ required: true }]}>
+					<Form.Item name="image" label="Image" rules={[{ required: true }]}>
 						<Upload accept='.jpg,.jpeg' 
 							multiple={false} 
 							fileList={fileList} 
@@ -89,7 +89,7 @@ const EditProduct = props => {
 						>
 							<Button icon={<UploadOutlined/>}></Button>
 						</Upload>
-					</Form.Item> */}
+					</Form.Item>
                     <Form.Item name="description" label="Description" rules={[{ required: true }]}>
 						<Input.TextArea />
 					</Form.Item>

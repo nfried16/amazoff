@@ -43,7 +43,7 @@ const NavBar = props => {
     }
 
     const toProducts = () => {
-        props.history.push('/products');
+        props.history.push(`/products/${localStorage.getItem('id')}`);
     }
 
     const toFulfillment = () => {
@@ -55,7 +55,7 @@ const NavBar = props => {
     const sellerMenu = (
         <Menu>
             <CreateProduct/>
-            <Menu.Item key='products' onClick={toProducts}>View My Products</Menu.Item>
+            <Menu.Item key='products' onClick={toProducts}>My Inventory</Menu.Item>
             <Menu.Item key='fulfill' onClick={toFulfillment}>Fulfill Orders</Menu.Item>
         </Menu>
     );

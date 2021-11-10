@@ -63,7 +63,7 @@ function App() {
 				<ProtectedRoute exact auth={auth} path='/fulfill' component={FulfillOrder} />
 				<ProtectedRoute exact auth={auth} path='/user/:id' component={UserAccount} />
 				<ProtectedRoute exact auth={auth} path='/product/:id' component = {Product} />
-				<ProtectedRoute exact auth={auth} path='/products' component={SellerProducts} />
+				<ProtectedRoute exact auth={auth} path='/products/:id' component={SellerProducts} />
 				<ProtectedRoute exact auth={auth} path='/search' component={ProductList} />
 				<Redirect from='*' to='/home' />
 			</Switch>

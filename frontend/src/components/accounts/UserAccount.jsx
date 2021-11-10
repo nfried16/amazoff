@@ -3,6 +3,7 @@ import { withRouter } from 'react-router-dom';
 import { GetSellerReviews, GetUser } from '../../api/api';
 import EditUser from './EditUser';
 import ReviewCard from '../reviews/ReviewCard';
+import { PresetColorTypes } from 'antd/lib/_util/colors';
 
 const UserAccount = props => {
 
@@ -11,7 +12,7 @@ const UserAccount = props => {
     const [reviews, setReviews] = useState([])
 
     // This user is a seller
-    const isSeller = localStorage.getItem('isSeller') === 'true';
+    const isSeller = !loading && user && user.isSeller;
     // This is the logged in user
     const isSelf = !loading && user && localStorage.getItem('id') == user.id;
 
@@ -24,7 +25,7 @@ const UserAccount = props => {
         GetUser(localStorage.getItem('token'), userId)
             .then(res => {
                 setUser(res);
-                if(isSeller) {
+                if(res.isSeller) {
                     getReviews();
                 }
                 setLoading(false);
@@ -40,6 +41,10 @@ const UserAccount = props => {
         const reviews = await GetSellerReviews(localStorage.getItem('token'), sellerId)
             .catch(err => [])
         setReviews(reviews);
+    }
+
+    const toProducts = () => {
+        props.history.push(`/products/${user.id}`);
     }
 
     return (
@@ -86,6 +91,12 @@ const UserAccount = props => {
                                 <div>Balance: {user.balance}</div>
                             )
                         }
+                        <div 
+                            onClick = {toProducts}
+                            style = {{color: '#007185', cursor: 'pointer'}}
+                        >
+                            View Products
+                        </div>
                         { 
                             // Info only for sellers (reviews)
                             isSeller && (

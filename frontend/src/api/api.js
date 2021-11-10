@@ -76,8 +76,8 @@ export const GetProductById = async (token, id) => {
     return data;
 }
 
-export const GetProductsBySeller = async (token) => {
-    const { data } = await client.get(`/product/seller`, {
+export const GetProductsBySeller = async (token, id) => {
+    const { data } = await client.get(`/products/${id}`, {
         headers: {
             'Authorization': `Bearer ${token}`
         }

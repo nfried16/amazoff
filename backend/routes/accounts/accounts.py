@@ -21,6 +21,7 @@ def get_user(id):
                 FROM Seller
                 WHERE id=:id
                 ''', id=id)) > 0
+        user['isSeller'] = isSeller
         return user
     except IndexError:
         return 'User does not exist', 400

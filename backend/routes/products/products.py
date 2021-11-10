@@ -25,22 +25,27 @@ def get_product_by_id(id):
         return 'Product does not exist', 400
 
 # Get products for a particular seller
-@products_blueprint.route('/product/seller', methods=['GET'])
+@products_blueprint.route('/products/<string:id>', methods=['GET'])
 @jwt_required()
-def get_products_for_seller():
-
-    seller_id = get_jwt_identity()
+def get_products_for_seller(id):
 
     try:
+        first_name = app.db.execute('''
+        SELECT first_name
+        FROM Users
+        WHERE id=:id
+        ''', id=id)[0]
+
         products = app.db.execute('''
         SELECT SellerProduct.*, Product.name
         FROM SellerProduct, Product
         WHERE SellerProduct.seller_id=:seller_id
             AND SellerProduct.product_id=Product.id
-        ''', seller_id=seller_id)
+        ''', seller_id=id)
     
-        return jsonify(products)
-    except:
+        return jsonify({**first_name, 'products': products})
+    except Exception as e:
+        print(e)
         return 'Product does not exist', 400
 
 # Edit a seller product
