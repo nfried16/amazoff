@@ -4,9 +4,14 @@ import { Button, Table, Select, message } from 'antd';
 import { GetCart, Order, EditCartItem } from '../../api/api';
 import RemoveFromCart from './RemoveFromCart';
 
+function useForceUpdate(){
+    const [value, setValue] = useState(0); 
+    return () => setValue(value => value + 1);
+}
+
 const Cart = props => {
     const [cart, setCart] = useState(null);
-
+    const forceUpdate = useForceUpdate();
 
     useEffect(() => {
         updateCart();
@@ -62,8 +67,9 @@ const Cart = props => {
                     options={options} 
                     defaultValue={record.amount}
                     onChange = {val => {
-                        EditCartItem(localStorage.getItem('token'), record.id, record.seller_id, val)
-                        record.amount = val
+                        EditCartItem(localStorage.getItem('token'), record.id, record.seller_id, val);
+                        record.amount = val;
+                        forceUpdate();
                     }}
                 />
             ),
