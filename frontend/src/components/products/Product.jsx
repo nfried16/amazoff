@@ -13,7 +13,6 @@ const Product = props => {
     const [product, setProduct] = useState(null);
     const [sellers, setSellers] = useState([]);
     const [reviews, setReviews] = useState([]);
-    const [loadingCart, setLoadingCart] = useState(null);
 
     useEffect(() => {
         setLoading(true);
@@ -111,12 +110,12 @@ const Product = props => {
                     ) : (
                         <div style = {{width: '75%', display: 'flex', display: 'flex', flexDirection: 'column', marginBottom: '10vh'}}>
                             <div style={{ width: '100%', display: 'flex', alignItems: 'center'}}>
-                                <div style={{ width: '47.5%', display: 'flex', height: '30vh', justifyContent: 'center', alignItems: 'center', background: '#EAEDED'}}>
+                                <div style={{ width: '47.5%', display: 'flex', height: '30vh', justifyContent: 'center', alignItems: 'center', background: '#EAEDED', borderRadius: '5px'}}>
                                     <img src={`data:image/jpeg;base64,${product.image}`} style = {{maxWidth: '95%', maxHeight: '95%'}} />
                                 </div>
                                 <div style = {{width: '5%'}}>
                                 </div>
-                                <div style={{ width: '47.6%', height: '100%', background: '#EAEDED', display: 'flex', alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'column', padding: '2%', borderRadius: '0px 5px 5px 0px' }}>
+                                <div style={{ width: '47.5%', height: '100%', background: '#EAEDED', display: 'flex', alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'column', padding: '2%', borderRadius: '5px' }}>
                                     <div style={{ fontSize: '2rem', display: 'flex', alignItems: 'center', width: '100%', justifyContent: 'center' }}>
                                         <div>
                                             {product.name}

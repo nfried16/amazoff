@@ -29,6 +29,10 @@ const Register = props => {
                 alert('YOOOO NAHH');
             });
     }
+
+    const toLogin = () => {
+        props.history.push('/login');
+    }
     
     return (
         <div style = {{width: '100vw', height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
@@ -55,6 +59,12 @@ const Register = props => {
                     <Button type="primary" htmlType="submit">
                         Register
                     </Button>
+                    <div style = {{display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', float: 'right', marginTop: '5vh'}}>
+                        Already have an account?
+                        <Button type="link" htmlType="button" onClick={toLogin}>
+                            Log in
+                        </Button>
+                    </div>
                 </Form.Item>
             </Form>
         </div>

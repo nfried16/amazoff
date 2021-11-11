@@ -75,7 +75,10 @@ const NavBar = props => {
                 </Link>
             </div>
             <div style={{ height: '50%', width: '40%', background: 'white', borderRadius: '5px 0px 0px 5px', display: 'flex', justifyContent: 'center'}}>
-                <Input value={search} bordered={false} onChange = {e => setSearch(e.target.value)} />
+                <Input value={search} bordered={false} 
+                    onChange = {e => setSearch(e.target.value)}
+                    onKeyPress = {e => e.key === 'Enter' && onSearch()}
+                />
             </div>
             <Button icon={<SearchOutlined style={{fontSize: '125%'}}/>} 
                 style={{ height: '6vh', width: '6vh', background: '#FEBD69', borderRadius: '0px 5px 5px 0px', borderWidth: '0px'}}

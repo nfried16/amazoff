@@ -29,6 +29,10 @@ const Login = props => {
                 alert('YOOOO NAHH');
             });
     }
+
+    const toRegister = () => {
+        props.history.push('/register');
+    }
     
     return (
         <div style = {{width: '100vw', height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
@@ -42,6 +46,9 @@ const Login = props => {
                 <Form.Item {...tailLayout}>
                     <Button type="primary" htmlType="submit">
                         Log in
+                    </Button>
+                    <Button type="link" htmlType="button" onClick={toRegister}>
+                        Register
                     </Button>
                 </Form.Item>
             </Form>

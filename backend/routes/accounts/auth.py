@@ -1,5 +1,6 @@
 from flask import request, jsonify, Blueprint, current_app as app
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
+from werkzeug.security import generate_password_hash, check_password_hash, safe_str_cmp, _hash_internal
 from datetime import timedelta
 
 auth_blueprint = Blueprint('auth_blueprint', __name__)
@@ -14,17 +15,26 @@ def login():
     try:
         # Validate username password
         user = app.db.execute('''
-        SELECT *
+        SELECT id, password
         FROM Users
-        WHERE email = :email AND password = :password
+        WHERE email = :email
         ''', email=email, password=password)[0]
+
+        user_id = user['id']
+        pwhash = user['password']
+
+        # Compare password hash
+        method, salt, hashval = pwhash.split("$", 2)
+        match = safe_str_cmp(_hash_internal(method, salt, password)[0], hashval)
+        if not match:
+            raise Exception('Incorrect password')
  
         try:
             app.db.execute('''
             SELECT *
             FROM SELLER
             WHERE id=:id
-            ''', id=user['id'])[0]
+            ''', id=user_id)[0]
             isSeller = True
         except: 
             isSeller = False
@@ -32,9 +42,10 @@ def login():
         # Create a new token with the user id inside
         access_token = create_access_token(identity=user['id'], expires_delta=timedelta(hours=1))
         return jsonify({"token": access_token, "id": user['id'], "isSeller": isSeller})
-    except IndexError:
+    except Exception as e:
+        print(e)
         # Invalid username or password
-        return jsonify({"msg": "Bad username or password"}), 401
+        return str(e), 401
 
 @auth_blueprint.route('/register', methods=['POST'])
 def register():
@@ -47,13 +58,16 @@ def register():
     is_seller = request.json.get("is_seller")
 
     try:
-        # Validate username password
+        # Generate password hash
+        pwhash = generate_password_hash(password)
+        # Insert new account
         user_id = app.db.execute('''
         INSERT INTO Users(email, password, first_name, last_name, balance, address) 
-            VALUES(:email, :password, :first_name, :last_name, 0, :address)
+            VALUES(:email, :pwhash, :first_name, :last_name, 0, :address)
             RETURNING id
-        ''', email=email, password=password, first_name=first_name, last_name=last_name, address=address)[0]['id']
- 
+        ''', email=email, pwhash=pwhash, first_name=first_name, last_name=last_name, address=address)[0]['id']
+
+        # Add to sellers
         if(is_seller):
             app.db.execute('''
             INSERT INTO Seller
