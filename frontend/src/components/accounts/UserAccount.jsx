@@ -91,16 +91,16 @@ const UserAccount = props => {
                                 <div>Balance: {user.balance}</div>
                             )
                         }
-                        <div 
-                            onClick = {toProducts}
-                            style = {{color: '#007185', cursor: 'pointer'}}
-                        >
-                            View Products
-                        </div>
                         { 
-                            // Info only for sellers (reviews)
+                            // Info only for sellers (products/reviews)
                             isSeller && (
                                 <>
+                                <div 
+                                    onClick = {toProducts}
+                                    style = {{color: '#007185', cursor: 'pointer'}}
+                                >
+                                    View Products
+                                </div>
                                 <div style ={{marginTop: '10vh', fontSize: '2rem'}}>
                                     Reviews
                                 </div>
