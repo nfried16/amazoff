@@ -65,7 +65,7 @@ CREATE TABLE UserReview (
     rating INT NOT NULL CHECK (rating >= 1 AND rating <= 5),
     title VARCHAR(255),
     description VARCHAR NOT NULL,
-    date DATE NOT NULL,
+    date TIMESTAMP without time zone NOT NULL DEFAULT (current_timestamp AT TIME ZONE 'UTC'),
     PRIMARY KEY(user_id, seller_id)
 );
 
@@ -75,6 +75,6 @@ CREATE TABLE ProductReview (
     rating INT NOT NULL CHECK(rating>=1 AND rating <= 5),
     title VARCHAR(255),
     description VARCHAR NOT NULL,
-    date DATE NOT NULL,
+    date TIMESTAMP without time zone NOT NULL DEFAULT (current_timestamp AT TIME ZONE 'UTC'),
     PRIMARY KEY (user_id, product_id)
 );

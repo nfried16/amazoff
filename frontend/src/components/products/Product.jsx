@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react';
 import { withRouter } from 'react-router-dom';
-import { GetProductById, GetProductReviews, GetSellers } from '../../api/api';
+import { GetProductById, GetProductReviews, GetSellers, CanReviewProduct } from '../../api/api';
 import AddToCart from './AddToCart';
 import EditProduct from './EditProduct';
 import StartSelling from './StartSelling';
 import { Table, Select } from 'antd';
 import ReviewCard from '../reviews/ReviewCard';
+import AddReview from '../reviews/AddReview';
 
 const Product = props => {
 
@@ -13,6 +14,7 @@ const Product = props => {
     const [product, setProduct] = useState(null);
     const [sellers, setSellers] = useState([]);
     const [reviews, setReviews] = useState([]);
+    const [canReview, setCanReview] = useState(false);
 
     useEffect(() => {
         setLoading(true);
@@ -55,10 +57,26 @@ const Product = props => {
     }
 
     const getReviews = async () => {
-        await GetProductReviews(localStorage.getItem('token'), productId)
+        checkCanReview();
+        const revs = await GetProductReviews(localStorage.getItem('token'), productId)
             .then(res => {
-                setReviews(res);
+                // Move user's reviews to beginning
+                res.forEach((rev, i) => {
+                    if(rev.user_id == localStorage.getItem('id')){
+                        res.splice(i, 1);
+                        res.unshift(rev);
+                    }
+                });
+                return res;
             })
+            .catch(err => []);
+        setReviews(revs);
+    }
+
+    const checkCanReview = async () => {
+        await CanReviewProduct(localStorage.getItem('token'), productId)
+            .then(res => setCanReview(res))
+            .catch(err => setCanReview(false));
     }
 
     const options = Array.from(
@@ -100,6 +118,19 @@ const Product = props => {
             ),
         }
     ];
+
+    const reviewRender = !reviews ? [] : reviews.map(review => (
+        review.user_id == localStorage.getItem('id') ?
+        <ReviewCard 
+            updateReviews={getReviews}
+            key = {review.user_id+'-'+review.product_id}
+            {...review}
+        /> :
+        <ReviewCard 
+            key = {review.user_id+'-'+review.product_id}
+            {...review}
+        />
+    ))
     
     return (
         <div style = {{marginTop: '10vh', width: '100%', display: 'flex', justifyContent: 'center'}}>
@@ -157,13 +188,21 @@ const Product = props => {
                                 <Table columns={columns} dataSource = {sellers} pagination = {false}
                                     style = {{width: '100%'}}
                                 />
-                                <div style={{ marginTop: '10vh', marginBottom: '4vh', fontSize: '2rem' }}>
+                                <div style = {{fontSize: '2rem', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', marginTop: '10vh'}}>
                                     Reviews
+                                    {
+                                        canReview &&
+                                        <div style = {{marginLeft: '2%', display: 'flex', alignItems: 'center'}}>
+                                            <AddReview 
+                                                type = 'product'
+                                                reviewId = {product.id}
+                                                updateReviews = {getReviews}
+                                            />
+                                        </div>
+                                    }
                                 </div>
-                                <div style = {{ width: '60%'}}>
-                                    {reviews.map(review => (
-                                        <ReviewCard key={review.id} {...review}/>
-                                    ))}
+                                <div style = {{ width: '50%', marginTop: '5vh'}}>
+                                    {reviewRender}
                                 </div>
                             </div>
                         </div>

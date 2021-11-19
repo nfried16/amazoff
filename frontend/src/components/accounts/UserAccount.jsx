@@ -1,15 +1,16 @@
 import { useEffect, useState } from 'react';
 import { withRouter } from 'react-router-dom';
-import { GetSellerReviews, GetUser } from '../../api/api';
+import { GetSellerReviews, GetUser, CanReviewSeller } from '../../api/api';
 import EditUser from './EditUser';
 import ReviewCard from '../reviews/ReviewCard';
-import { PresetColorTypes } from 'antd/lib/_util/colors';
+import AddReview from '../reviews/AddReview';
 
 const UserAccount = props => {
 
     const [loading, setLoading] = useState(true);
     const [user, setUser] = useState(null);
-    const [reviews, setReviews] = useState([])
+    const [reviews, setReviews] = useState([]);
+    const [canReview, setCanReview] = useState(false);
 
     // This user is a seller
     const isSeller = !loading && user && user.isSeller;
@@ -18,7 +19,7 @@ const UserAccount = props => {
 
     useEffect(() => {
         updateUser();
-    }, [])
+    }, [props.match.params.id])
 
     const updateUser = () => {
         const userId = props.match.params.id;
@@ -37,15 +38,50 @@ const UserAccount = props => {
     }
 
     const getReviews = async () => {
+        checkCanReview();
         const sellerId = props.match.params.id;
         const reviews = await GetSellerReviews(localStorage.getItem('token'), sellerId)
+            .then(res => {
+                // Move user's reviews to beginning
+                res.forEach((rev, i) => {
+                    if(res.user_id == localStorage.getItem('id')){
+                        res.splice(i, 1);
+                        res.unshift(rev);
+                    }
+                });
+                return res;
+            })
             .catch(err => [])
         setReviews(reviews);
+    }
+
+    const checkCanReview = async () => {
+        const sellerId = props.match.params.id;
+        CanReviewSeller(localStorage.getItem('token'), sellerId)
+            .then(res => { 
+                setCanReview(res);
+            })
+            .catch(err => {
+                setCanReview(false);
+            })
     }
 
     const toProducts = () => {
         props.history.push(`/products/${user.id}`);
     }
+
+    const reviewRender = !reviews ? [] : reviews.map(review => (
+        review.user_id == localStorage.getItem('id') ?
+        <ReviewCard 
+            updateReviews={getReviews}
+            key = {review.user_id+'-'+review.seller_id}
+            {...review}
+        /> :
+        <ReviewCard 
+            key = {review.user_id+'-'+review.seller_id}
+            {...review}
+        />
+    ))
 
     return (
         <div style = {{ marginTop: '10vh', paddingBottom: '10vh', width: '100%', display: 'flex', justifyContent: 'center'}}>
@@ -101,15 +137,21 @@ const UserAccount = props => {
                                 >
                                     View Products
                                 </div>
-                                <div style ={{marginTop: '10vh', fontSize: '2rem'}}>
+                                <div style = {{fontSize: '2rem', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', marginTop: '10vh'}}>
                                     Reviews
+                                    {
+                                        canReview &&
+                                        <div style = {{marginLeft: '2%', display: 'flex', alignItems: 'center'}}>
+                                            <AddReview 
+                                                type = 'seller'
+                                                reviewId = {user.id}
+                                                updateReviews = {getReviews}
+                                            />
+                                        </div>
+                                    }
                                 </div>
                                 <div style = {{marginTop: '5vh', width: '50%'}}>
-                                    {
-                                        reviews.map(review => (
-                                            <ReviewCard {...review}/>
-                                        ))
-                                    }
+                                    {reviewRender}
                                 </div>
                                 </>
                             )

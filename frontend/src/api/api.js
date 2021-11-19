@@ -299,3 +299,111 @@ export const GetProductReviews = async (token, id) => {
     printOutput && console.log(data);
     return data;
 }
+
+export const CanReviewSeller = async (token, id) => {
+    const { data } = await client.get(`/review/validate/seller/${id}`, {
+        headers: {
+            'Authorization': `Bearer ${token}`
+        }
+    });
+    printOutput && console.log(data);
+    return data;
+}
+
+export const CanReviewProduct = async (token, id) => {
+    const { data } = await client.get(`/review/validate/product/${id}`, {
+        headers: {
+            'Authorization': `Bearer ${token}`
+        }
+    });
+    printOutput && console.log(data);
+    return data;
+}
+
+export const CreateSellerReview = async (token, sellerId, title, rating, description) => {
+    const { data } = await client.post(`/review/seller/${sellerId}`, 
+        {
+            title: title,
+            rating: rating,
+            description: description
+        },
+        {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        }
+    );
+    printOutput && console.log(data);
+    return data;
+}
+
+export const CreateProductReview = async (token, productId, title, rating, description) => {
+    const { data } = await client.post(`/review/product/${productId}`, 
+        {
+            title: title,
+            rating: rating,
+            description: description
+        },
+        {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        }
+    );
+    printOutput && console.log(data);
+    return data;
+}
+
+export const EditSellerReview = async (token, sellerId, title, rating, description) => {
+    const { data } = await client.patch(`/review/seller/${sellerId}`, 
+        {
+            title: title,
+            rating: rating,
+            description: description
+        },
+        {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        }
+    );
+    printOutput && console.log(data);
+    return data;
+}
+
+export const EditProductReview = async (token, productId, title, rating, description) => {
+    const { data } = await client.patch(`/review/product/${productId}`, 
+        {
+            title: title,
+            rating: rating,
+            description: description
+        },
+        {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        }
+    );
+    printOutput && console.log(data);
+    return data;
+}
+
+export const DeleteSellerReview = async (token, sellerId) => {
+    const { data } = await client.delete(`/review/seller/${sellerId}`, {
+        headers: {
+            'Authorization': `Bearer ${token}`
+        }
+    });
+    printOutput && console.log(data);
+    return data;
+}
+
+export const DeleteProductReview = async (token, productId) => {
+    const { data } = await client.delete(`/review/product/${productId}`, {
+        headers: {
+            'Authorization': `Bearer ${token}`
+        }
+    });
+    printOutput && console.log(data);
+    return data;
+}
