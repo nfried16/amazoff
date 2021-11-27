@@ -15,4 +15,4 @@ fi
 createdb $dbname
 
 psql -af create.sql $dbname
-psql -af load.sql $dbname
+psql -af load_many.sql $dbname

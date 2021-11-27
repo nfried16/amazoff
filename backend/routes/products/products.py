@@ -171,6 +171,20 @@ def start_selling(id):
 def search():
 
     search = request.args['search']
+    page = int(request.args.get('page', 1))
+    per_page = 15
+    offset = (page-1)*per_page
+
+    num_rows = app.db.execute('''
+        SELECT COUNT(*)
+        FROM Product
+        WHERE Product.name LIKE '%:search%'
+    ''', search=AsIs(search))[0]['count']
+
+    if num_rows == 0:
+        return jsonify({'products': [], start: 0, end: 0, page: 0, num_rows: 0})
+    elif offset >= num_rows:
+        return 'Invalid page', 400
 
     # Get Products
     products = app.db.execute('''
@@ -186,12 +200,17 @@ def search():
         WHERE Product.name LIKE '%:search%' AND 
             Product.creator=Users.id
         GROUP BY Product.id, Users.id
-        ''', search=AsIs(search))
+        LIMIT :per_page
+        OFFSET :offset
+        ''', search=AsIs(search), per_page=per_page, offset=offset)
 
     for product in products:
         product['image'] = base64.encodebytes(product['image'].tobytes()).decode('ascii')
 
-    return jsonify(products)
+    start = offset+1
+    end = min(offset+15, num_rows)
+    
+    return jsonify({'products': products, 'start': start, 'end': end, 'page': page, 'num_rows': num_rows})
 
 # Get Categories
 @products_blueprint.route('/categories', methods=['GET'])

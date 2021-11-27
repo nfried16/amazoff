@@ -8,7 +8,7 @@ num_products = 2000
 num_purchases = 2500
 Faker.seed(0)
 fake = Faker()
-seed(1) # random number for balanca
+seed(1) # random number for balance
 categories = ['Electronics', 'Toys', 'Games', 'Books', 'Clothing', 'Sports', 'Art', 'Camera', 'Grocery', 'Health']
 def get_csv_writer(f):
     return csv.writer(f, dialect='unix')
@@ -17,7 +17,7 @@ def gen_users(num_users):
     with open('Users.csv', 'w') as f:
         writer = get_csv_writer(f)
         print('Users...', end=' ', flush=True)
-        for uid in range(num_users):
+        for uid in range(1, num_users):
             if uid % 10 == 0:
                 print(f'{uid}', end=' ', flush=True)
             profile = fake.profile()
@@ -30,7 +30,7 @@ def gen_users(num_users):
             lastname = name_components[-1]
             address = profile['address']
             balance = randint(0, 500)
-            writer.writerow([uid, email, password, firstname, lastname, address, balance])
+            writer.writerow([email, password, firstname, lastname, address, balance])
         print(f'{num_users} generated')
     return
 def gen_prod_categories():
@@ -47,7 +47,7 @@ def gen_sellers():
     with open('Seller.csv', 'w') as f:
         writer = get_csv_writer(f)
         print('Sellers...', end=' \n', flush=True)
-        for i in range(10):
+        for i in range(1, 10+1):
             seller = i
             writer.writerow([seller])
             sellers.append(seller)
@@ -58,17 +58,17 @@ def gen_products(num_products):
     with open('Products.csv', 'w') as f:
         writer = get_csv_writer(f)
         print('Products...', end=' ', flush=True)
-        for pid in range(num_products):
+        for pid in range(1, num_products):
             if pid % 100 == 0:
                 print(f'{pid}', end=' \n', flush=True)
             name = fake.sentence(nb_words=4)[:-1]
             description = 'This is a ' + name
             image = '0x02135ae4'
             category = categories[pid % 10]
-            creator = pid % 10
+            creator = (pid % 10)+1
             creators.append(creator)
             # price = f'{str(fake.random_int(max=500))}.{fake.random_int(max=99):02}'
-            writer.writerow([pid, name, description, image, category, creator])
+            writer.writerow([name, description, image, category, creator])
     return available_pids
 # need to use products that exist and sellers that exist
 product_prices_amt = {}
@@ -76,8 +76,8 @@ def gen_seller_product():
     with open('SellerProduct.csv', 'w') as f:
         writer = get_csv_writer(f)
         print('SellerProduct...', end=' \n', flush=True)
-        for i in range(2000):
-            seller = i%10
+        for i in range(1, 2000):
+            seller = i%10+1
             product = i
             price = randint(0, 200)
             amt_in_stock = randint(0, 500)
@@ -93,8 +93,8 @@ def gen_order_item():
     with open('OrderItem.csv', 'w') as f:
         writer = get_csv_writer(f)
         print('OrderItem...', end=' \n', flush=True)
-        for i in range(2000):
-            seller = i%10
+        for i in range(1, 2000):
+            seller = i%10+1
             order_id = i
             product = i
             price = product_prices_amt[product][0]

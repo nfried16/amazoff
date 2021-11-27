@@ -20,7 +20,7 @@ const NavBar = props => {
     const [search, setSearch] = useState('');
 
     const onSearch = () => {
-        props.history.push(`/search?search=${search}`);
+        props.history.push(`/search?search=${search}&page=1`);
     }
 
     const toAccount = () => {
