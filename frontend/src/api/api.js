@@ -148,8 +148,16 @@ export const StartSelling = async (token, formData, productId) => {
     return data;
 }
 
-export const SearchProducts = async (token, search, page) => {
-    const { data } = await client.get(`/product?search=${search}&page=${page}`,
+export const SearchProducts = async (token, search, page, category, sort) => {
+    let params = `/product?search=${search}&page=${page}`;
+    if(category) {
+        params += `&category=${category}`;
+    }
+    if(sort) {
+        params += `&sort=${sort}`;
+    }
+    console.log(params)
+    const { data } = await client.get(params,
         {
             headers: {
                 'Authorization': `Bearer ${token}`

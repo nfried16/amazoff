@@ -43,7 +43,6 @@ def login():
         access_token = create_access_token(identity=user['id'], expires_delta=timedelta(hours=1))
         return jsonify({"token": access_token, "id": user['id'], "isSeller": isSeller})
     except Exception as e:
-        print(e)
         # Invalid username or password
         return str(e), 401
 

@@ -172,22 +172,42 @@ def search():
 
     search = request.args['search']
     page = int(request.args.get('page', 1))
+    category = request.args.get('category', None)
+    sort = request.args.get('sort', None)
     per_page = 15
     offset = (page-1)*per_page
 
-    num_rows = app.db.execute('''
+    # Category filterng
+    if not category:
+        cat_filter = 'true'
+    else:
+        cat_filter = f"Product.category='{category}'"
+
+    # Sorting by price
+    if sort == 'low':
+        sort_filter = 'ORDER BY price'
+    elif sort == 'high':
+        sort_filter = 'ORDER BY price DESC'
+    else:
+        sort_filter = ''
+
+    num_rows = app.db.execute(f'''
         SELECT COUNT(*)
         FROM Product
-        WHERE Product.name LIKE '%:search%'
+        WHERE (Product.name LIKE '%:search%'
+            OR Product.description LIKE '%:search%') AND
+            {cat_filter}
     ''', search=AsIs(search))[0]['count']
 
+    print(num_rows)
+
     if num_rows == 0:
-        return jsonify({'products': [], start: 0, end: 0, page: 0, num_rows: 0})
+        return jsonify({'products': [], 'start': 0, 'end': 0, 'page': 0, 'num_rows': 0})
     elif offset >= num_rows:
         return 'Invalid page', 400
 
     # Get Products
-    products = app.db.execute('''
+    products = app.db.execute(f'''
         SELECT Product.*, 
             Users.first_name, Users.last_name, 
             Cast(AVG(COALESCE(ProductReview.rating, 0)) as Decimal(10, 1)) as rating, 
@@ -196,10 +216,13 @@ def search():
             ON Product.id=ProductReview.product_id
             LEFT OUTER JOIN SellerProduct
             ON Product.id=SellerProduct.product_id,
-        Users
-        WHERE Product.name LIKE '%:search%' AND 
-            Product.creator=Users.id
+            Users
+        WHERE (Product.name LIKE '%:search%' OR 
+            Product.description LIKE '%:search%') AND 
+            Product.creator=Users.id AND
+            {cat_filter}
         GROUP BY Product.id, Users.id
+        {sort_filter}
         LIMIT :per_page
         OFFSET :offset
         ''', search=AsIs(search), per_page=per_page, offset=offset)

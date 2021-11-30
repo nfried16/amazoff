@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import ProductCard from './ProductCard';
-import { Pagination } from 'antd';
-import { SearchProducts } from '../../api/api';
+import { Pagination, Select}  from 'antd';
+import { SearchProducts, GetCategories } from '../../api/api';
 import { withRouter } from 'react-router';
 
 const ProductList = props => {
@@ -9,15 +9,24 @@ const ProductList = props => {
     const [products, setProducts] = useState(null);
     const [search, setSearch] = useState('');
     const [range, setRange] = useState({start: 0, end: 0, page: 0, num_rows: 0});
+    const [categories, setCategories] = useState([]);
+    const [category, setCategory] = useState(null);
+    const [sort, setSort] = useState(null);
 
     useEffect(async () => {
+        // Get Categories
+        updateCategories();
         // Start loading
         setProducts(null);
         const params = new URLSearchParams(props.location.search);
         const search = params.get('search');
+        const cat = params.get('category');
+        const sortParam = params.get('sort');
+        setCategory(cat);
+        setSort(sortParam);
         const page = parseInt(params.get('page') || 1);
         setSearch(search);
-        const res = await SearchProducts(localStorage.getItem('token'), search, page)
+        const res = await SearchProducts(localStorage.getItem('token'), search, page, cat, sortParam)
             .catch(err => {
                 // Push back to first page
                 if(page !== 1) {
@@ -36,11 +45,71 @@ const ProductList = props => {
         props.history.push(window.location.pathname + "?" + currentParams.toString());
     }
 
+    const switchCategory = cat => {
+        setCategory(cat);
+        const currentParams = new URLSearchParams(window.location.search);
+        if(!cat) {
+            currentParams.delete('category');
+        }
+        else {
+            currentParams.set('category', cat);
+        }
+        currentParams.set('page', 1);
+        props.history.push(window.location.pathname + "?" + currentParams.toString());
+    }
+
+    const switchSort = newSort => {
+        setSort(newSort);
+        const currentParams = new URLSearchParams(window.location.search);
+        if(!newSort) {
+            currentParams.delete('sort');
+        }
+        else {
+            currentParams.set('sort', newSort);
+        }
+        currentParams.set('page', 1);
+        props.history.push(window.location.pathname + "?" + currentParams.toString());
+    }
+
+    const updateCategories = async () => {
+        return GetCategories(localStorage.getItem('token'))
+            .then(res => {
+                setCategories(res);
+            })
+            .catch(err => {
+                setCategories([]);
+            })
+    }
+
     return (
         <>
         <center style ={{marginTop: '10vh'}}>
-            <div style = {{fontSize: '1.5rem', fontWeight: 'bold'}}>
+            <div style = {{fontSize: '1.5rem', fontWeight: 'bold', display: 'flex', justifyContent: 'center'}}>
                 {`Search results for \"${search}\":`}
+                <div style = {{right: '10vw', position: 'absolute'}}>
+                    <Select style={{ width: 100, marginRight: '5px', fontSize: '0.75rem' }} placeholder='Category' value={category}
+                        onChange={switchCategory}
+                    >
+                        <Select.Option key = {'all'} value={null} tyle={{fontSize: '0.75rem'}}>
+                            All
+                        </Select.Option>
+                        {categories.map(cat => (
+                            <Select.Option key = {cat} value={cat} tyle={{fontSize: '0.75rem'}}>
+                                {cat}
+                            </Select.Option>
+                        ))}
+                    </Select>
+                    <Select style={{ width: 150, fontSize: '0.75rem' }} placeholder={'Sort by price'} value={sort}
+                        onChange={switchSort}
+                    >
+                        <Select.Option value='low' style={{fontSize: '0.75rem'}}>
+                            Price: Low to High
+                        </Select.Option>
+                        <Select.Option value='high' style={{fontSize: '0.75rem'}}>
+                            Price: High to Low
+                        </Select.Option>
+                    </Select>
+                </div>
             </div>
             {
                 products !== null &&
@@ -50,7 +119,6 @@ const ProductList = props => {
                         'No results'
                     }
                 </div>
-
             }
         </center>
         {products === null ? (
@@ -68,12 +136,14 @@ const ProductList = props => {
                             />
                         )
                     )}
-                    <center>
-                        <Pagination pageSize={15} total={range.num_rows} current={range.page} 
-                            showSizeChanger={false}
-                            onChange={switchPage}
-                        />
-                    </center>
+                    {products.length > 0 &&
+                        <center>
+                            <Pagination pageSize={15} total={range.num_rows} current={range.page} 
+                                showSizeChanger={false}
+                                onChange={switchPage}
+                            />
+                        </center>
+                    }
                 </div>
             </div>
         )}
