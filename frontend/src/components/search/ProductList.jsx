@@ -87,7 +87,7 @@ const ProductList = props => {
             <div style = {{fontSize: '1.5rem', fontWeight: 'bold', display: 'flex', justifyContent: 'center'}}>
                 {`Search results for \"${search}\":`}
                 <div style = {{right: '10vw', position: 'absolute'}}>
-                    <Select style={{ width: 100, marginRight: '5px', fontSize: '0.75rem' }} placeholder='Category' value={category}
+                    <Select style={{ width: 125, marginRight: '5px', fontSize: '0.75rem' }} placeholder='Category' value={category}
                         onChange={switchCategory}
                     >
                         <Select.Option key = {'all'} value={null} tyle={{fontSize: '0.75rem'}}>

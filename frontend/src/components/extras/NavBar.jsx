@@ -50,6 +50,10 @@ const NavBar = props => {
         props.history.push('/fulfill');
     }
 
+    const toReviews = () => {
+        props.history.push(`/reviews`);
+    }
+
     const isSeller = localStorage.getItem('isSeller') === 'true';
 
     const sellerMenu = (
@@ -64,6 +68,13 @@ const NavBar = props => {
         <Menu>
             <Menu.Item key='cart' onClick={toCart}>Cart</Menu.Item>
             <Menu.Item key='orders' onClick={toOrders}>Orders</Menu.Item>
+        </Menu>
+    );
+
+    const accountMenu = (
+        <Menu>
+            <Menu.Item key='account' onClick={toAccount}>My Account</Menu.Item>
+            <Menu.Item key='reviews' onClick={toReviews}>My Reviews</Menu.Item>
         </Menu>
     );
 
@@ -92,10 +103,11 @@ const NavBar = props => {
                     />
                 </Dropdown>
             )}
-            <Button type='ghost' icon={<UserOutlined style={{ color: 'white', fontSize: '150%' }} />}
-                style={{ height: '6vh', width: '6vh', marginRight: '2%', borderRadius: '5px', marginLeft: !isSeller && 'auto'}}
-                onClick={toAccount}
-            />
+            <Dropdown overlay={accountMenu}>
+                <Button type='ghost' icon={<UserOutlined style={{ color: 'white', fontSize: '150%' }} />}
+                    style={{ height: '6vh', width: '6vh', marginRight: '2%', borderRadius: '5px', marginLeft: !isSeller && 'auto'}}
+                />
+            </Dropdown>
             <Dropdown
                 overlay={cartMenu}
             >

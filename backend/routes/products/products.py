@@ -165,6 +165,24 @@ def start_selling(id):
 
     return jsonify(product_id)
 
+# Stop selling product
+@products_blueprint.route('/product/<string:id>', methods=['DELETE'])
+@jwt_required()
+def stop_selling(id):
+
+    seller_id = get_jwt_identity()
+
+    # Delete seller product
+    product_id = app.db.execute('''
+        DELETE FROM SellerProduct
+            WHERE product_id=:product_id AND
+                seller_id=:seller_id
+        RETURNING product_id
+        ''', product_id=id, seller_id=seller_id)
+    app.db.session.commit()
+
+    return jsonify(product_id)
+
 # Search by name
 @products_blueprint.route('/product', methods=['GET'])
 @jwt_required()
@@ -194,8 +212,8 @@ def search():
     num_rows = app.db.execute(f'''
         SELECT COUNT(*)
         FROM Product
-        WHERE (Product.name LIKE '%:search%'
-            OR Product.description LIKE '%:search%') AND
+        WHERE (Product.name ILIKE '%:search%'
+            OR Product.description ILIKE '%:search%') AND
             {cat_filter}
     ''', search=AsIs(search))[0]['count']
 
@@ -217,8 +235,8 @@ def search():
             LEFT OUTER JOIN SellerProduct
             ON Product.id=SellerProduct.product_id,
             Users
-        WHERE (Product.name LIKE '%:search%' OR 
-            Product.description LIKE '%:search%') AND 
+        WHERE (Product.name ILIKE '%:search%' OR 
+            Product.description ILIKE '%:search%') AND 
             Product.creator=Users.id AND
             {cat_filter}
         GROUP BY Product.id, Users.id

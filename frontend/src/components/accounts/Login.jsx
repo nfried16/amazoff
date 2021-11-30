@@ -41,7 +41,7 @@ const Login = props => {
                     <Input />
                 </Form.Item>
                 <Form.Item name="password" label="Password" rules={[{ required: true }]}>
-                    <Input />
+                    <Input.Password />
                 </Form.Item>
                 <Form.Item {...tailLayout}>
                     <Button type="primary" htmlType="submit">

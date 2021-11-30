@@ -10,6 +10,8 @@ const UserAccount = props => {
     const [loading, setLoading] = useState(true);
     const [user, setUser] = useState(null);
     const [reviews, setReviews] = useState([]);
+    const [numReviews, setNumReviews] = useState(0);
+    const [avg, setAvg] = useState(0);
     const [canReview, setCanReview] = useState(false);
 
     // This user is a seller
@@ -40,11 +42,13 @@ const UserAccount = props => {
     const getReviews = async () => {
         checkCanReview();
         const sellerId = props.match.params.id;
-        const reviews = await GetSellerReviews(localStorage.getItem('token'), sellerId)
+        let total = 0;
+        const revs = await GetSellerReviews(localStorage.getItem('token'), sellerId)
             .then(res => {
                 // Move user's reviews to beginning
                 res.forEach((rev, i) => {
-                    if(res.user_id == localStorage.getItem('id')){
+                    total+=rev.rating;
+                    if(rev.user_id == localStorage.getItem('id')){
                         res.splice(i, 1);
                         res.unshift(rev);
                     }
@@ -52,7 +56,9 @@ const UserAccount = props => {
                 return res;
             })
             .catch(err => [])
-        setReviews(reviews);
+        setNumReviews(revs.length);
+        setAvg(revs.length > 0 ? Math.round(total/revs.length*100)/100 : 0);
+        setReviews(revs);
     }
 
     const checkCanReview = async () => {
@@ -137,18 +143,28 @@ const UserAccount = props => {
                                 >
                                     View Products
                                 </div>
-                                <div style = {{fontSize: '2rem', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', marginTop: '10vh'}}>
-                                    Reviews
-                                    {
-                                        canReview &&
-                                        <div style = {{marginLeft: '2%', display: 'flex', alignItems: 'center'}}>
-                                            <AddReview 
-                                                type = 'seller'
-                                                reviewId = {user.id}
-                                                updateReviews = {getReviews}
-                                            />
+                                <div style = {{fontSize: '2rem', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', marginTop: '10vh', flexDirection: 'column'}}>
+                                    <div style = {{display: 'flex'}}>
+                                        Reviews
+                                        {
+                                            canReview &&
+                                            <div style = {{marginLeft: '5%', display: 'flex', alignItems: 'center'}}>
+                                                <AddReview 
+                                                    type = 'seller'
+                                                    reviewId = {user.id}
+                                                    updateReviews = {getReviews}
+                                                />
+                                            </div>
+                                        }
+                                    </div>
+                                    <div style={{fontSize: '0.75rem', textAlign: 'center', borderStyle: 'solid', borderWidth: '1px', borderColor: 'black', borderRadius: '3px', padding: '0.5rem', background: '#F5F6F8', width: '50%'}}>
+                                        <div style={{marginBottom: '-0.1rem'}}>
+                                            Number of reviews: {numReviews}
                                         </div>
-                                    }
+                                        <div style={{marginTop: '-0.1rem'}}>
+                                            Average review: {avg}
+                                        </div>
+                                    </div>
                                 </div>
                                 <div style = {{marginTop: '5vh', width: '50%'}}>
                                     {reviewRender}

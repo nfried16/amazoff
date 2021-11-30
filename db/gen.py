@@ -3,6 +3,7 @@ import csv
 from faker import Faker
 from random import seed
 from random import randint
+from images.images import colors
 import sys
 
 num_users = 100
@@ -68,7 +69,7 @@ def gen_products(num_products):
         for pid in range(1, num_products+1):
             name = fake.sentence(nb_words=4)[:-1]
             description = 'This is a ' + name
-            image = '\\xffd8ffdb004300ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffc0000b080001000101011100ffc40014000100000000000000000000000000000003ffc40014100100000000000000000000000000000000ffda0008010100003f0037ffd9'
+            image = colors[pid%len(colors)]
             category = categories[pid % 10]
             creator = (pid % num_sellers)+1
             creators.append(creator)

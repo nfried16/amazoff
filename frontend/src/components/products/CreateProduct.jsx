@@ -29,6 +29,7 @@ const EditProduct = props => {
 		.then(async values => {
 			await uploadData(values);
 			setVisible(false);
+			form.resetFields();
 		})
 		.catch(info => {
 			console.log('Validate Failed:', info);

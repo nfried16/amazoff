@@ -5,6 +5,35 @@ from flask import Blueprint
 
 social_blueprint = Blueprint('social_blueprint', __name__)
 
+@social_blueprint.route('/reviews', methods=['GET'])
+@jwt_required()
+def get_my_reviews():
+
+    user_id = get_jwt_identity()
+
+    user_reviews = app.db.execute('''
+    SELECT u1.first_name as first_name, u1.last_name as last_name, 
+        UserReview.title, UserReview.rating, UserReview.date, UserReview.description, UserReview.user_id, UserReview.seller_id,
+        u2.first_name as seller_first_name, u2.last_name as seller_last_name
+    FROM UserReview, Users as u1, Users as u2
+    WHERE UserReview.user_id = :id
+        AND u1.id=UserReview.user_id
+        AND u2.id=UserReview.seller_id
+    ORDER BY date DESC
+    ''', id=user_id)
+
+    product_reviews = app.db.execute('''
+    SELECT Users.first_name, Users.last_name,
+        ProductReview.title, ProductReview.rating, ProductReview.date, ProductReview.description, ProductReview.user_id, ProductReview.product_id,
+        Product.name
+    FROM ProductReview, Users, Product
+    WHERE ProductReview.user_id = :id
+        AND Users.id=ProductReview.user_id
+        AND Product.id=ProductReview.product_id
+    ORDER BY date DESC
+    ''', id=user_id)
+
+    return jsonify([*user_reviews, *product_reviews])
 
 @social_blueprint.route('/reviews/seller/<string:id>', methods=['GET'])
 @jwt_required()

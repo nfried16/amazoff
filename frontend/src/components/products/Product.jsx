@@ -14,6 +14,8 @@ const Product = props => {
     const [product, setProduct] = useState(null);
     const [sellers, setSellers] = useState([]);
     const [reviews, setReviews] = useState([]);
+    const [numReviews, setNumReviews] = useState(0);
+    const [avg, setAvg] = useState(0);
     const [canReview, setCanReview] = useState(false);
 
     useEffect(() => {
@@ -58,10 +60,12 @@ const Product = props => {
 
     const getReviews = async () => {
         checkCanReview();
+        let total = 0;
         const revs = await GetProductReviews(localStorage.getItem('token'), productId)
             .then(res => {
                 // Move user's reviews to beginning
                 res.forEach((rev, i) => {
+                    total+=rev.rating;
                     if(rev.user_id == localStorage.getItem('id')){
                         res.splice(i, 1);
                         res.unshift(rev);
@@ -70,6 +74,8 @@ const Product = props => {
                 return res;
             })
             .catch(err => []);
+        setNumReviews(revs.length);
+        setAvg(revs.length > 0 ? Math.round(total/revs.length*100)/100 : 0);
         setReviews(revs);
     }
 
@@ -142,7 +148,7 @@ const Product = props => {
                         <div style = {{width: '75%', display: 'flex', display: 'flex', flexDirection: 'column', marginBottom: '10vh'}}>
                             <div style={{ width: '100%', display: 'flex', alignItems: 'center'}}>
                                 <div style={{ width: '47.5%', display: 'flex', height: '30vh', justifyContent: 'center', alignItems: 'center', background: '#EAEDED', borderRadius: '5px'}}>
-                                    <img src={`data:image/jpeg;base64,${product.image}`} style = {{maxWidth: '95%', maxHeight: '95%'}} />
+                                    <img src={`data:image/jpeg;base64,${product.image}`} style = {{maxWidth: '95%', maxHeight: '95%', minHeight: '95%'}} />
                                 </div>
                                 <div style = {{width: '5%'}}>
                                 </div>
@@ -188,18 +194,28 @@ const Product = props => {
                                 <Table columns={columns} dataSource = {sellers} pagination = {false}
                                     style = {{width: '100%'}}
                                 />
-                                <div style = {{fontSize: '2rem', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', marginTop: '10vh'}}>
-                                    Reviews
-                                    {
-                                        canReview &&
-                                        <div style = {{marginLeft: '2%', display: 'flex', alignItems: 'center'}}>
-                                            <AddReview 
-                                                type = 'product'
-                                                reviewId = {product.id}
-                                                updateReviews = {getReviews}
-                                            />
+                                <div style = {{fontSize: '2rem', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', marginTop: '10vh', flexDirection: 'column'}}>
+                                    <div style={{display: 'flex'}}>
+                                        Reviews
+                                        {
+                                            canReview &&
+                                            <div style = {{marginLeft: '5%', display: 'flex', alignItems: 'center'}}>
+                                                <AddReview 
+                                                    type = 'product'
+                                                    reviewId = {product.id}
+                                                    updateReviews = {getReviews}
+                                                />
+                                            </div>
+                                        }
+                                    </div>
+                                    <div style={{fontSize: '0.75rem', textAlign: 'center', borderStyle: 'solid', borderWidth: '1px', borderColor: 'black', borderRadius: '3px', padding: '0.5rem', background: '#F5F6F8', width: '50%'}}>
+                                        <div style={{marginBottom: '-0.1rem'}}>
+                                            Number of reviews: {numReviews}
                                         </div>
-                                    }
+                                        <div style={{marginTop: '-0.1rem'}}>
+                                            Average review: {avg}
+                                        </div>
+                                    </div>
                                 </div>
                                 <div style = {{ width: '50%', marginTop: '5vh'}}>
                                     {reviewRender}

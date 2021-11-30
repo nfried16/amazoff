@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Button, Modal, Form, InputNumber } from 'antd';
-import { EditSellerProduct as edit, GetCategories } from '../../api/api';
+import { EditSellerProduct as edit } from '../../api/api';
 import { EditOutlined } from '@ant-design/icons';
 import { withRouter } from 'react-router';
 

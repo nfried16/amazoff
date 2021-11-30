@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { GetProductsBySeller } from '../../api/api';
 import { withRouter, Redirect } from 'react-router-dom';
 import { Input, Table, message } from 'antd';
+import DeleteSellerProduct from './DeleteSellerProduct';
 import EditSellerProduct from './EditSellerProduct';
 
 const SellerProducts = props => {
@@ -47,13 +48,21 @@ const SellerProducts = props => {
         { title: 'Price', key: 'price', dataIndex: 'price' },
         { title: 'Amount in stock', key: 'amt_in_stock', dataIndex: 'amt_in_stock' },
         // Conditional column
-        ... isSelf ?
-        [{
-            title: 'Edit', key: 'edit', dataIndex: 'edit', 
-            render: (text, record) => (
-                <EditSellerProduct product={record} reloadProducts={reloadProducts}/>
-            )
-        }] : []
+        ...isSelf ?
+        [
+            {
+                title: 'Edit', key: 'edit', dataIndex: 'edit', 
+                render: (text, record) => (
+                    <EditSellerProduct product={record} reloadProducts={reloadProducts}/>
+                )
+            },
+            {
+                title: 'Delete', key: 'delete', dataIndex: 'delete', 
+                render: (text, record) => (
+                    <DeleteSellerProduct product={record} reloadProducts={reloadProducts}/>
+                )
+            }
+        ] : []
     ];
 
     if(!products.length) {

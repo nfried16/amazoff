@@ -148,6 +148,16 @@ export const StartSelling = async (token, formData, productId) => {
     return data;
 }
 
+export const StopSelling = async (token, productId) => {
+    const { data } = await client.delete(`/product/${productId}`, {
+        headers: {
+            'Authorization': `Bearer ${token}`
+        }
+    });
+    printOutput && console.log(data);
+    return data;
+}
+
 export const SearchProducts = async (token, search, page, category, sort) => {
     let params = `/product?search=${search}&page=${page}`;
     if(category) {
@@ -288,6 +298,16 @@ export const Fulfill = async (token, order_id, product_id) => {
 }
 
 /* ---------- Reviews ---------- */
+export const GetMyReviews = async (token) => {
+    const { data } = await client.get(`/reviews`, {
+        headers: {
+            'Authorization': `Bearer ${token}`
+        }
+    });
+    printOutput && console.log(data);
+    return data;
+}
+
 export const GetSellerReviews = async (token, id) => {
     const { data } = await client.get(`/reviews/seller/${id}`, {
         headers: {
