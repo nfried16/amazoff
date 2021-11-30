@@ -29,7 +29,6 @@ const MyReviews = props => {
         setLoading(false);
         setNumReviews(revs.length);
         setAvg(revs.length > 0 ? Math.round(total/revs.length*100)/100 : 0);
-        console.log(revs);
         setReviews(revs);
     }
 

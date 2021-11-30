@@ -33,7 +33,9 @@ def get_my_reviews():
     ORDER BY date DESC
     ''', id=user_id)
 
-    return jsonify([*user_reviews, *product_reviews])
+    combined = [*user_reviews, *product_reviews]
+    sorted_combined = sorted(combined, key=lambda d: d['date'], reverse=True)
+    return jsonify(sorted_combined)
 
 @social_blueprint.route('/reviews/seller/<string:id>', methods=['GET'])
 @jwt_required()
