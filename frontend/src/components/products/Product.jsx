@@ -8,6 +8,7 @@ import { Table, Select } from 'antd';
 import ReviewCard from '../reviews/ReviewCard';
 import AddReview from '../reviews/AddReview';
 
+// Product page
 const Product = props => {
 
     const [loading, setLoading] = useState(true);
@@ -22,6 +23,7 @@ const Product = props => {
         setLoading(true);
         getProduct()
             .then(async res => {
+                // Wait to get sellers and reviews
                 await Promise.all(
                     [
                         getSellers(),
@@ -35,12 +37,17 @@ const Product = props => {
             })
     }, [props.match.params.id])
 
+    // This user is a seller
     const isSeller = product && localStorage.getItem('isSeller') === 'true';
+    // This user can start selling this product
     const canSell = isSeller && !sellers.some(seller => seller.id == localStorage.getItem('id'));
+    // This user is the creator of this product
     const isCreator = product && product.creator == localStorage.getItem('id');
+    // Product id
     const productId = props.match.params.id;
 
     const getProduct = async () => {
+        // Get product by id
         await GetProductById(localStorage.getItem('token'), productId)
             .then(async res => {
                 setProduct(res);
@@ -48,6 +55,7 @@ const Product = props => {
     }
 
     const getSellers = async () => {
+        // Get sellers of this product
         await GetSellers(localStorage.getItem('token'), productId)
             .then(res => {
                 setSellers(res.map(row => {
@@ -60,6 +68,7 @@ const Product = props => {
 
     const getReviews = async () => {
         checkCanReview();
+        // Total review sum to calculate average
         let total = 0;
         const revs = await GetProductReviews(localStorage.getItem('token'), productId)
             .then(res => {
@@ -80,11 +89,13 @@ const Product = props => {
     }
 
     const checkCanReview = async () => {
+        // Check if this user can create a new review
         await CanReviewProduct(localStorage.getItem('token'), productId)
             .then(res => setCanReview(res))
             .catch(err => setCanReview(false));
     }
 
+    // Amount to add to cart (1-10)
     const options = Array.from(
         {length: 10}, 
         (_, i) => {
@@ -92,8 +103,10 @@ const Product = props => {
         }
     )
 
+    // Columns for sellers of product
     const columns = [
         {
+            // Seller name, click to go to user page
             title: 'Seller', key: 'name', dataIndex: 'name',
             render: (text, record) => (
                 <div style={{ color: '#007185', cursor: 'pointer' }}
@@ -106,6 +119,7 @@ const Product = props => {
         { title: 'Price', key: 'price', dataIndex: 'price' },
         { title: 'Amount in stock', key: 'amt_in_stock', dataIndex: 'amt_in_stock' },
         { 
+            // Amount to add to cart
             title: 'Qty: ', key: 'qty', dataIndex: 'qty', 
             render: (text, record) => (
                 <Select 
@@ -118,6 +132,7 @@ const Product = props => {
             ),
         },
         {
+            // Click to add to cart
             title: 'Add to cart', key: 'add', dataIndex: 'add',
             render: (text, record) => (
                 <AddToCart product_id={productId} record={record}/>
@@ -125,7 +140,9 @@ const Product = props => {
         }
     ];
 
+    // JSX for reviews
     const reviewRender = !reviews ? [] : reviews.map(review => (
+        // If this is the current user's review, pass updateReviews in order to show edit/delete button on review
         review.user_id == localStorage.getItem('id') ?
         <ReviewCard 
             updateReviews={getReviews}
@@ -154,7 +171,7 @@ const Product = props => {
                                 </div>
                                 <div style={{ width: '47.5%', height: '100%', background: '#EAEDED', display: 'flex', alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'column', padding: '2%', borderRadius: '5px' }}>
                                     <div style={{ fontSize: '2rem', display: 'flex', alignItems: 'center', width: '100%', justifyContent: 'center' }}>
-                                        <div>
+                                        <div style = {{textAlign: 'center', lineHeight: '2rem'}}>
                                             {product.name}
                                         </div>
                                         {isCreator && (
@@ -166,7 +183,7 @@ const Product = props => {
                                             </div>
                                         )}
                                     </div>
-                                    <div style={{ marginTop: '-1%' }}>
+                                    <div>
                                         {product.category}
                                     </div>
                                     <div style = {{fontSize: '0.8rem', width: '80%', marginTop: '2%'}}>

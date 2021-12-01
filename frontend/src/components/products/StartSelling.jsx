@@ -9,6 +9,7 @@ const layout = {
     wrapperCol: { span: 16 },
 };
 
+// Button to start selling a product
 const StartSelling = props => {
 
 	const [visible, setVisible] = useState(false);
@@ -26,6 +27,7 @@ const StartSelling = props => {
 	}
 
 	const uploadData = async (values) => {
+		// Add price/amount to form data and start selling product
 		const formData = new FormData();
 		formData.append('price', values.price);
 		formData.append('amt_in_stock', values.amt_in_stock);

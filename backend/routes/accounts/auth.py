@@ -5,7 +5,7 @@ from datetime import timedelta
 
 auth_blueprint = Blueprint('auth_blueprint', __name__)
 
-
+# Login
 @auth_blueprint.route('/login', methods=['POST'])
 def login():
 
@@ -29,6 +29,7 @@ def login():
         if not match:
             raise Exception('Incorrect password')
  
+        # Check if seller
         try:
             app.db.execute('''
             SELECT *
@@ -46,6 +47,7 @@ def login():
         # Invalid username or password
         return str(e), 401
 
+# Register user
 @auth_blueprint.route('/register', methods=['POST'])
 def register():
 
@@ -83,12 +85,14 @@ def register():
         # Invalid username or password
         return jsonify({"msg": "Bad username or password"}), 401
 
+# Get user by token (used to check if logged in)
 @auth_blueprint.route('/me', methods=['GET'])
 @jwt_required()
 def me():
     user_id = get_jwt_identity()
 
     try:
+        # Get user by id
         user = app.db.execute('''
         SELECT *
         FROM Users
@@ -96,6 +100,7 @@ def me():
         ''', id=user_id)[0]
 
         try:
+            # Check if seller
             app.db.execute('''
             SELECT *
             FROM SELLER

@@ -5,6 +5,7 @@ import { AddToCart as add } from '../../api/api';
 
 const AddToCart = props => {
 
+    // State of item being added (0 = button not yet clicked, 1 = loading, 2 = success/added, 3 = error adding)
     const [loading, setLoading] = useState(0);
 
     switch(loading) {

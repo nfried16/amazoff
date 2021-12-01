@@ -25,18 +25,22 @@ const EditProduct = props => {
 	}, [])
 
 	const onOk = () => {
+		// Validate fields, create product, push to newly created product page
 		form.validateFields()
 		.then(async values => {
 			await uploadData(values);
 			setVisible(false);
 			form.resetFields();
+			setFileList([]);
 		})
 		.catch(info => {
 			console.log('Validate Failed:', info);
 		});
 	}
 
+	// Upload new product info
 	const uploadData = async (values) => {
+		// Store all data, including image filed in form datas
 		const formData = new FormData();
 		formData.append('name', values.name);
 		formData.append('image', values.image.file.originFileObj);
@@ -49,7 +53,6 @@ const EditProduct = props => {
 	}
 
 	const onCancel = () => {
-		form.resetFields();
 		setVisible(false);
 	}
 
@@ -79,7 +82,7 @@ const EditProduct = props => {
 					form = {form}
 				>
 					<Form.Item name="name" label="Product Name" rules={[{ required: true }]}>
-						<Input />
+						<Input maxLength={50}/>
 					</Form.Item>
 					<Form.Item name="image" label="Image" rules={[{ required: true }]}>
 						<Upload accept='.jpg,.jpeg' 

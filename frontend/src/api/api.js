@@ -65,6 +65,21 @@ export const EditUser = async (token, user) => {
 	return data;
 };
 
+export const UpdatePassword = async (token, old_pass, new_pass) => {
+	const { data } = await client.patch("/user/password",
+		{
+            old_pass: old_pass,
+            new_pass: new_pass
+        },
+		{
+			headers: {
+				'Authorization': `Bearer ${token}`
+			}
+		});
+	printOutput && console.log(data);
+	return data;
+};
+
 /* ---------- PRODUCTS ---------- */
 export const GetProductById = async (token, id) => {
     const { data } = await client.get(`/product/${id}`, {

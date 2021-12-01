@@ -3,6 +3,7 @@ import { UserOutlined } from '@ant-design/icons';
 import EditReview from './EditReview';
 import DeleteReview from './DeleteReview';
 
+// Render review info
 const ReviewCard = props => {
 
     return (
@@ -25,7 +26,7 @@ const ReviewCard = props => {
                 }
             </div>
             <div style={{ fontSize: '1rem', display: 'flex', alignItems: 'center', marginTop: '5px' }}>
-                <Rate disabled defaultValue={props.rating}/>
+                <Rate disabled value={props.rating}/>
                 <div style={{ marginLeft: '2%', fontWeight: 'bold' }}>
                     {props.title}
                 </div>

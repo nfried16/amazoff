@@ -25,6 +25,7 @@ const AddReview = props => {
 	}
 
 	const review = async values => {
+		// This component is used for both seller and product reviews, so check which one to create
 		if(props.type === 'seller') {
 			await CreateSellerReview(localStorage.getItem('token'), props.reviewId, values.title, values.rating, values.description)
 				.then(res => {

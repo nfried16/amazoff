@@ -15,6 +15,7 @@ const EditProduct = props => {
 	const [form] = Form.useForm();
 
 	useEffect(() => {
+		// Set initial values of product info
 		form.setFieldsValue(props.product);
 	}, [props.product])
 
@@ -30,6 +31,7 @@ const EditProduct = props => {
 	}
 
 	const uploadData = async (values) => {
+		// Add new product info to form data
 		const formData = new FormData();
 		formData.append('price', values.price);
 		formData.append('amt_in_stock', values.amt_in_stock);

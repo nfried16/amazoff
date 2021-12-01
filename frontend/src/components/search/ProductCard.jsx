@@ -1,8 +1,10 @@
 import { Rate } from 'antd';
 import { withRouter } from 'react-router';
 
+// Product card shown in search list
 const ProductCard = props => {
 
+    // Click to go to product page
     const onClick = () => {
         props.history.push(`/product/${props.id}`);
     }

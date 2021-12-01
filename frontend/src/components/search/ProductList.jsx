@@ -18,20 +18,22 @@ const ProductList = props => {
         updateCategories();
         // Start loading
         setProducts(null);
+        // Get url params (search value, category filter, sorting)
         const params = new URLSearchParams(props.location.search);
         const search = params.get('search');
         const cat = params.get('category');
         const sortParam = params.get('sort');
+        setSearch(search);
         setCategory(cat);
         setSort(sortParam);
         const page = parseInt(params.get('page') || 1);
-        setSearch(search);
         const res = await SearchProducts(localStorage.getItem('token'), search, page, cat, sortParam)
             .catch(err => {
-                // Push back to first page
+                // Push back to first page if not already on it
                 if(page !== 1) {
                     switchPage(1);
                 }
+                // Default empty info
                 return {products: [], start: 0, end: 0, page: 0, num_rows: 0};
             });
         const {products: productArr, ...rangeResult} = res;
@@ -39,12 +41,14 @@ const ProductList = props => {
         setRange(rangeResult);
     }, [props.location])
 
+    // Go to new page
     const switchPage = newPage => {
         const currentParams = new URLSearchParams(window.location.search);
         currentParams.set('page', newPage);
         props.history.push(window.location.pathname + "?" + currentParams.toString());
     }
 
+    // Change category filter
     const switchCategory = cat => {
         setCategory(cat);
         const currentParams = new URLSearchParams(window.location.search);
@@ -58,6 +62,7 @@ const ProductList = props => {
         props.history.push(window.location.pathname + "?" + currentParams.toString());
     }
 
+    // Change sorting
     const switchSort = newSort => {
         setSort(newSort);
         const currentParams = new URLSearchParams(window.location.search);
@@ -71,6 +76,7 @@ const ProductList = props => {
         props.history.push(window.location.pathname + "?" + currentParams.toString());
     }
 
+    // Fetch categories for dropdown
     const updateCategories = async () => {
         return GetCategories(localStorage.getItem('token'))
             .then(res => {

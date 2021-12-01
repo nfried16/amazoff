@@ -4,6 +4,7 @@ import { StopSelling } from '../../api/api';
 import { DeleteOutlined, CloseOutlined, CheckOutlined } from '@ant-design/icons';
 import { withRouter } from 'react-router';
 
+// Confirm deletion of product
 const DeleteSellerProduct = props => {
 
 	const [visible, setVisible] = useState(false);
@@ -12,6 +13,7 @@ const DeleteSellerProduct = props => {
 	const onOk = async () => {
         setLoading(1);
         setVisible(false);
+        // Stop selling this product
 		await StopSelling(localStorage.getItem('token'), props.product.product_id)
             .then(res => {
                 setLoading(3);

@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { EditUser as edit } from '../../api/api';
-import { Button, Modal, Form, Input, InputNumber } from 'antd';
+import { EditUser as edit, UpdatePassword } from '../../api/api';
+import { Button, Modal, Form, Input, InputNumber, message} from 'antd';
 import { EditOutlined } from '@ant-design/icons';
 
 const layout = {
@@ -11,13 +11,16 @@ const layout = {
 const EditUser = props => {
 
 	const [visible, setVisible] = useState(false);
+	const [showPassModal, setShowPassModal] = useState(false);
 	const [form] = Form.useForm();
+	const [passForm] = Form.useForm();
 
 	const onOk = () => {
 		form.validateFields()
 		.then(values => {
 			edit(localStorage.getItem('token'), values)
 			.then(res => {
+				// Update user page with new info
 				props.updatePage();
 			})
 			.catch(err => console.log(err));
@@ -31,6 +34,31 @@ const EditUser = props => {
 	const onCancel = () => {
 		form.resetFields();
 		setVisible(false);
+	}
+
+	const onOkPass = () => {
+		passForm.validateFields()
+		.then(values => {
+			// Send old and new values
+			UpdatePassword(localStorage.getItem('token'), values['Old Password'], values['Old Password'])
+			.then(res => {
+				passForm.resetFields();
+				message.success('Password updated');
+				setShowPassModal(false);
+			})
+			.catch(err => {
+				// Check if old password sent was correct
+				if(err.response && err.response.status === 403) {
+					message.error('Incorrect current password');
+				}
+				else {
+					message.error('Error updating password');
+				}
+			});
+		})
+		.catch(info => {
+			console.log('Validate Failed:', info);
+		});
 	}
 
     return (
@@ -60,6 +88,26 @@ const EditUser = props => {
 					</Form.Item>
 					<Form.Item name="balance" label="Balance" initialValue = {props.user.balance} rules={[{ required: true }]}>
 						<InputNumber precision = {2} min = {0} />
+					</Form.Item>
+				</Form>
+				<center style={{color: '#007185', cursor: 'pointer'}}
+					onClick = {() => setShowPassModal(true)}
+				>
+					Change Password
+				</center>
+			</Modal>
+			<Modal title="Change Password" 
+				visible={showPassModal}
+				onCancel={() => setShowPassModal(false)}
+				onOk={onOkPass}
+				okText='Save'
+			>
+				<Form {...layout} form = {passForm}>
+					<Form.Item name="Old Password" label="Old Password" rules={[{ required: true }]}>
+						<Input.Password />
+					</Form.Item>
+					<Form.Item name="New Password" label="New Password" rules={[{ required: true }]}>
+						<Input.Password />
 					</Form.Item>
 				</Form>
 			</Modal>

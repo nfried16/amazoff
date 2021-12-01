@@ -13,6 +13,7 @@ def get_cart():
 
     user_id = get_jwt_identity()
 
+    # Get cart items
     cart_items = app.db.execute('''
         SELECT Product.id, Product.name, Users.first_name, Users.last_name, SellerProduct.price, SellerProduct.seller_id, CartItem.amount 
         FROM CartItem, SellerProduct, Product, Users
@@ -35,6 +36,7 @@ def add_to_cart():
     product_id = request.json['product_id']
     amount = request.json['amount']
 
+    # Create and return cart item
     cart_item = app.db.execute('''
         INSERT INTO CartItem 
             VALUES(:user_id, :seller_id, :product_id, :amount)
@@ -54,6 +56,7 @@ def edit_item(product_id, seller_id):
     user_id = get_jwt_identity()
     amount = request.json['amount']
 
+    # Update quantity
     cart_item = app.db.execute('''
         UPDATE CartItem
             SET amount=:amount
@@ -71,6 +74,7 @@ def remove_from_cart(product_id, seller_id):
 
     user_id = get_jwt_identity()
 
+    # Delete cart item
     cart_item = app.db.execute('''
         DELETE FROM CartItem
             WHERE user_id=:user_id AND seller_id=:seller_id AND product_id=:product_id
@@ -87,6 +91,7 @@ def order():
 
     user_id = get_jwt_identity()
     
+    # Get all current cart items
     cart_items = app.db.execute('''
         SELECT Product.name, Users.first_name, Users.last_name,
             SellerProduct.seller_id, SellerProduct.product_id, SellerProduct.price, 
@@ -102,12 +107,14 @@ def order():
     if(len(cart_items) == 0):
         return 'Cart is empty', 400
     try:
+        # Create a new order to add items to
         order_id = app.db.execute('''
             INSERT INTO Orders(user_id)
                 VALUES(:user_id)
                 RETURNING id
             ''', user_id=user_id)[0]['id']
         for cart_item in cart_items:
+            # Get info for this cart item
             name = cart_item['name']
             first_name = cart_item['first_name']
             last_name = cart_item['last_name']
@@ -157,6 +164,7 @@ def order():
                 ''', user_id=user_id, seller_id=seller_id, product_id=product_id)
         app.db.session.commit()
     except Exception as e:
+        # Roll back all changes if any error occurs (IMPORTANT)
         app.db.session.rollback()
         return str(e), 400
 
@@ -169,6 +177,7 @@ def get_orders():
 
     user_id = get_jwt_identity()
 
+    # Get orders and whether or not ALL items are fulfilled
     orders = app.db.execute('''
         SELECT Orders.id, Orders.order_date, 
             SUM(OrderItem.price*OrderItem.amount) as total, COUNT(*), 
@@ -189,6 +198,7 @@ def get_seller_orders():
 
     user_id = get_jwt_identity()
 
+    # Get all items of this seller that have been ordered
     orders = app.db.execute('''
         SELECT Orders.order_date, Orders.user_id, Product.name, OrderItem.*, Users.first_name, Users.last_name
             FROM Orders, OrderItem, Product, Users
@@ -208,6 +218,7 @@ def get_order(id):
 
     user_id = get_jwt_identity()
 
+    # Get all items on order
     order_items = app.db.execute('''
         SELECT Orders.id, Orders.order_date, Orders.user_id, OrderItem.*, Product.name, Users.first_name, Users.last_name
             FROM OrderItem, Orders, Product, Users
@@ -217,6 +228,7 @@ def get_order(id):
             AND OrderItem.seller_id=Users.id
     ''', id=id)
 
+    # This is not your order
     if order_items[0]['user_id'] != user_id:
         return 'Invalid permissions', 400
     
@@ -231,6 +243,7 @@ def fulfill():
     order_id = request.json['order_id']
     product_id = request.json['product_id']
 
+    # Set item as fulfilled
     order_item = app.db.execute('''
         UPDATE OrderItem
             Set fulfill_date=CURRENT_TIMESTAMP

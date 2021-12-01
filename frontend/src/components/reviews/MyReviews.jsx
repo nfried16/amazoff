@@ -14,8 +14,10 @@ const MyReviews = props => {
         getReviews();
     }, [])
 
+    // Get all of this user's reviews
     const getReviews = async () => {
         setLoading(true);
+        // Total review sum to calculate average
         let total = 0;
         const revs = await GetMyReviews(localStorage.getItem('token'))
             .then(res => {

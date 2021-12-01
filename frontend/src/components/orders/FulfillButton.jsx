@@ -7,10 +7,12 @@ const FulfillButton = props => {
 
     const [loading, setLoading] = useState(0);
 
+    // If already fulfilled, render date
     if(props.record.fulfill_date) {
         return new Date(props.record.fulfill_date).toLocaleDateString();
     }
     
+    // Else, show fulfill button
     switch(loading) {
         case 0:
             return <Button onClick={async () => {
@@ -20,7 +22,7 @@ const FulfillButton = props => {
                         props.updateOrderItems();
                     })
                     .catch(err => { 
-                        console.log(err)
+                        console.log(err);
                         setLoading(2);
                         setTimeout(() => {setLoading(0)}, 1000);
                     })

@@ -4,9 +4,9 @@ import { Button, Table } from 'antd';
 import FulfillButton from './FulfillButton';
 import { SendOutlined } from '@ant-design/icons';
 import { GetSellerOrders, Fulfill } from '../../api/api';
-// import { GetCart, Order, EditCartItem } from '../../api/api';
 
 const FulfillOrder = props => {
+
     const [orderItems, setOrderItems] = useState([]);
 
     useEffect(() => {
@@ -19,19 +19,22 @@ const FulfillOrder = props => {
         }
     }, [])
 
+    // Get order items
     const updateOrderItems = () => {
         GetSellerOrders(localStorage.getItem('token'))
             .then(orderItems => {
-                console.log(orderItems);
                 setOrderItems(orderItems.map(item => {
+                    // Add key to each item
                     item.key=item.order_id+'-'+item.seller_id+'-'+item.product_id;
                     return item;
                 }))
             })
     }
 
+    // Columns for order item table
     const columns = [
         {
+            // Product name, click to go to product page
             title: 'Product',
             dataIndex: 'name',
             key: 'name',
@@ -44,6 +47,7 @@ const FulfillOrder = props => {
             )
         },
         { 
+            // Buyer name, click to go to user page
             title: 'Buyer', dataIndex: 'user', key: 'user',
             render: (text, record) => (
                 <div style={{ color: '#007185', cursor: 'pointer' }}
@@ -54,11 +58,13 @@ const FulfillOrder = props => {
             )
         },
         { 
+            // Date ordered
             title: 'Date', dataIndex: 'order_date', key: 'order_date',
             render: (text, record) => new Date(record.order_date).toLocaleString()
         },
         { title: 'Amount', dataIndex: 'amount', key: 'amount' },
         { title: 'Fulfill', dataIndex: 'fulfill', key: 'fulfill', align: 'center',
+            // Click to fulfill, or show date fulfilled if already fulfilled
             render: (text, record) => 
                 <FulfillButton record={record} updateOrderItems={updateOrderItems}/>
         },

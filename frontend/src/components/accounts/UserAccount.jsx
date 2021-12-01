@@ -23,7 +23,9 @@ const UserAccount = props => {
         updateUser();
     }, [props.match.params.id])
 
+    // Get user info
     const updateUser = () => {
+        // User id in url
         const userId = props.match.params.id;
         GetUser(localStorage.getItem('token'), userId)
             .then(res => {
@@ -42,6 +44,7 @@ const UserAccount = props => {
     const getReviews = async () => {
         checkCanReview();
         const sellerId = props.match.params.id;
+        // Total review count to calculate average
         let total = 0;
         const revs = await GetSellerReviews(localStorage.getItem('token'), sellerId)
             .then(res => {
@@ -61,6 +64,7 @@ const UserAccount = props => {
         setReviews(revs);
     }
 
+    // Check if this user can create a new review
     const checkCanReview = async () => {
         const sellerId = props.match.params.id;
         CanReviewSeller(localStorage.getItem('token'), sellerId)
@@ -76,6 +80,7 @@ const UserAccount = props => {
         props.history.push(`/products/${user.id}`);
     }
 
+    // JSX for reviews
     const reviewRender = !reviews ? [] : reviews.map(review => (
         review.user_id == localStorage.getItem('id') ?
         <ReviewCard 

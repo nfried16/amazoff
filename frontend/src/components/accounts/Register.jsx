@@ -1,6 +1,6 @@
 import { Register as register } from '../../api/api';
 import { withRouter } from 'react-router-dom';
-import { Form, Input, Button, Checkbox } from 'antd';
+import { Form, Input, Button, Checkbox, message } from 'antd';
 
 const layout = {
     labelCol: { span: 8 },
@@ -15,6 +15,7 @@ const Register = props => {
     const [form] = Form.useForm();
 
     const onFinish = values => {
+        // Register
         register(values.email, values.password, values.firstName, values.lastName, values.address, !!values.isSeller)
             .then(res => {
                 // Just using localStorage instead of context
@@ -25,8 +26,7 @@ const Register = props => {
                 props.history.push('/home');
             })
             .catch(err => {
-                console.log(err)
-                alert('YOOOO NAHH');
+                message.error('Invalid email and/or password');
             });
     }
 

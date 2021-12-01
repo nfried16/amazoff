@@ -15,6 +15,7 @@ const Login = props => {
     const [form] = Form.useForm();
 
     const onFinish = () => {
+        // Login
         login(form.getFieldValue('email'), form.getFieldValue('password'))
             .then(res => {
                 // Just using localStorage instead of context

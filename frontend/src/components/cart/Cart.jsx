@@ -17,10 +17,12 @@ const Cart = props => {
         updateCart();
     }, [])
 
+    // Get cart data
     const updateCart = () => {
         GetCart(localStorage.getItem('token'))
         .then(res => {
             setCart(res.map(row => {
+                // Add key to each row
                 row.key = row.id + '-' + row.seller_id;
                 return row;
             }));
@@ -30,6 +32,7 @@ const Cart = props => {
         })
     }
 
+    // Amount to add to cart (Must be 1-10)
     const options = Array.from(
         {length: 10}, 
         (_, i) => {
@@ -37,8 +40,10 @@ const Cart = props => {
         }
     )
 
+    // Columns for cart table
     const columns = [
         {
+            // Item name, click to go to product page
             title: 'Item',
             dataIndex: 'name',
             key: 'name',
@@ -51,6 +56,7 @@ const Cart = props => {
             )
         },
         {
+            // Seller name, click to go to user page
             title: 'Seller', dataIndex: 'seller_id', key: 'seller_id',
             render: (text, record) => (
                 <div style={{ color: '#007185', cursor: 'pointer' }}
@@ -62,6 +68,7 @@ const Cart = props => {
         },
         { title: 'Price', dataIndex: 'price', key: 'price' },
         { title: 'Amount', dataIndex: 'amount', key: 'amount',
+            // Item amount, edit amount in database on change
             render: (text, record) => (
                 <Select 
                     options={options} 
@@ -75,6 +82,7 @@ const Cart = props => {
             ),
         },
         {
+            // Remove cart item
             title: 'Remove', dataIndex: 'remove', key: 'remove',
             render: (text, record) => (
                 <RemoveFromCart record={record} updateCart={updateCart}/>
@@ -82,6 +90,7 @@ const Cart = props => {
         },
     ];
 
+    // Attempt to submit order
     const onSubmit = () => {
         Order(localStorage.getItem('token'))
             .then(orderId => {
@@ -93,6 +102,7 @@ const Cart = props => {
             })
     }
 
+    // Still fetching cart
     if(!cart) {
         return (
             <center style = {{marginTop: '10vh'}}>
@@ -101,6 +111,7 @@ const Cart = props => {
         )
     }
 
+    // Calculate total cart price
     let total = 0;
     cart.forEach(item => {
         const itemTotal = item.amount * item.price;

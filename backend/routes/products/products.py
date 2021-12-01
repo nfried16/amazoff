@@ -53,12 +53,9 @@ def get_products_for_seller(id):
 @jwt_required()
 def edit_seller_product(id):
 
-    print(request.form)
-
     seller_id = get_jwt_identity()
     price = request.form['price']
     amt_in_stock = request.form['amt_in_stock']
-    print(seller_id, id, price, amt_in_stock)
 
     try:
         product = app.db.execute('''
@@ -217,11 +214,11 @@ def search():
             {cat_filter}
     ''', search=AsIs(search))[0]['count']
 
-    print(num_rows)
-
     if num_rows == 0:
+        # No products match
         return jsonify({'products': [], 'start': 0, 'end': 0, 'page': 0, 'num_rows': 0})
     elif offset >= num_rows:
+        # Page is greater than total pages
         return 'Invalid page', 400
 
     # Get Products
@@ -245,9 +242,11 @@ def search():
         OFFSET :offset
         ''', search=AsIs(search), per_page=per_page, offset=offset)
 
+    # Convert image to correct format
     for product in products:
         product['image'] = base64.encodebytes(product['image'].tobytes()).decode('ascii')
 
+    # Result range
     start = offset+1
     end = min(offset+15, num_rows)
     
@@ -258,6 +257,7 @@ def search():
 @jwt_required()
 def get_categories():
 
+    # Get all categoriew
     categories = app.db.execute('''
         SELECT name
         FROM Category

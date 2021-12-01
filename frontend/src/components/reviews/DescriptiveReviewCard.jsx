@@ -4,6 +4,7 @@ import { withRouter } from 'react-router-dom';
 import EditReview from './EditReview';
 import DeleteReview from './DeleteReview';
 
+// Review card which shows what is being reviewed
 const DescriptiveReviewCard = props => {
 
     const toProduct = id => {
@@ -37,7 +38,7 @@ const DescriptiveReviewCard = props => {
                 }
             </div>
             <div style={{ fontSize: '1rem', display: 'flex', alignItems: 'center' }}>
-                <Rate disabled defaultValue={props.rating}/>
+                <Rate disabled value={props.rating}/>
                 <div style={{ marginLeft: '2%', fontWeight: 'bold' }}>
                     {props.title}
                 </div>

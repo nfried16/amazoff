@@ -11,6 +11,7 @@ const Homepage = props => {
         updateCategories();
     }, [])
 
+    // Fetch categories
     const updateCategories = async () => {
         await GetCategories(localStorage.getItem('token'))
             .then(res => setCategories(res))
@@ -18,6 +19,7 @@ const Homepage = props => {
         setLoading(false);
     }
 
+    // Search this category
     const toCategory = cat => {
         props.history.push(`/search?search=&page=1&category=${cat}`);
     }

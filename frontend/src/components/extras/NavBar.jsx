@@ -12,21 +12,23 @@ const NavBar = props => {
         const newSearch = params.get('search');
         // Populate search bar on first page load with query params
         if(newSearch && newSearch !== search) {
-            console.log(newSearch)
             setSearch(newSearch)
         }
     }, [props.location.search])
 
     const [search, setSearch] = useState('');
 
+    // Search value
     const onSearch = () => {
         props.history.push(`/search?search=${search}&page=1`);
     }
 
+    // Go to user account
     const toAccount = () => {
         props.history.push(`/user/${localStorage.getItem('id')}`);
     }
 
+    // Logout, go to login page
     const logout = () => {
         localStorage.removeItem('token');
         localStorage.removeItem('id');
@@ -34,26 +36,32 @@ const NavBar = props => {
         props.history.push('/login');
     }
 
+    // Go to cart page
     const toCart = () => {
         props.history.push('/cart');
     }
 
+    // Go to order page
     const toOrders = () => {
         props.history.push('/orders');
     }
 
+    // Go to inventory page
     const toProducts = () => {
         props.history.push(`/products/${localStorage.getItem('id')}`);
     }
 
+    // Go to fulfillment page
     const toFulfillment = () => {
         props.history.push('/fulfill');
     }
 
+    // Go to review page
     const toReviews = () => {
         props.history.push(`/reviews`);
     }
 
+    // This user is a seller
     const isSeller = localStorage.getItem('isSeller') === 'true';
 
     const sellerMenu = (

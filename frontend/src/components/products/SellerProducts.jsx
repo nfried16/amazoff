@@ -16,26 +16,30 @@ const SellerProducts = props => {
         reloadProducts();
     }, [])
 
+    // Fetch data for this seller's inventory
     const reloadProducts = async () => {
         await GetProductsBySeller(localStorage.getItem('token'), seller_id)
                 .then(res => {
+                    // Track name of seller in state
                     const name = res.first_name;
                     setSeller(name);
                     const prodArr = res.products;
                     setProducts(prodArr.map(row => {
+                        // Set key for each product
                         row.key=row.product_id;
                         return row;
                     }))
                 })
                 .catch(e => {
-                    console.log(e)
                     message.error('Error fetching seller products');
                     props.history.push('/home');
                 })
     }
 
+    // Columns for user's products
     const columns = [
         { 
+            // Product name, click to go to product page
             title: 'Name', key: 'name', dataIndex: 'name',
             render: (text, record) => (
                 <div style={{ color: '#007185', cursor: 'pointer' }}
@@ -51,12 +55,14 @@ const SellerProducts = props => {
         ...isSelf ?
         [
             {
+                // Edit button
                 title: 'Edit', key: 'edit', dataIndex: 'edit', 
                 render: (text, record) => (
                     <EditSellerProduct product={record} reloadProducts={reloadProducts}/>
                 )
             },
             {
+                // Stop selling button
                 title: 'Delete', key: 'delete', dataIndex: 'delete', 
                 render: (text, record) => (
                     <DeleteSellerProduct product={record} reloadProducts={reloadProducts}/>
@@ -65,6 +71,7 @@ const SellerProducts = props => {
         ] : []
     ];
 
+    // If no products in inventory
     if(!products.length) {
         return (
             <div style = {{marginTop: '10vh', width: '100%', display: 'flex', justifyContent: 'center', fontSize: '1.5rem'}}>

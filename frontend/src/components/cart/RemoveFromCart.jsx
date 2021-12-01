@@ -5,6 +5,7 @@ import { RemoveFromCart as remove } from '../../api/api';
 
 const RemoveFromCart = props => {
 
+    // State of deleting cart item (0 = not clicked yet, 1 = loading, 2 = error deleting)
     const [loading, setLoading] = useState(0);
 
     switch(loading) {

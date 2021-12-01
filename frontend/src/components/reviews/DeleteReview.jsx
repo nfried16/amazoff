@@ -9,12 +9,14 @@ const layout = {
     wrapperCol: { span: 16 },
 };
 
-const EditReview = props => {
+// Button to delete a review
+const DeleteReview = props => {
 
 	const [visible, setVisible] = useState(false);
 	const [form] = Form.useForm();
 
 	const deleteReview = async values => {
+		// Check whether or not this is a seller or product review
 		if(props.seller_id) {
 			await DeleteSellerReview(localStorage.getItem('token'), props.seller_id)
 				.then(res => {
@@ -39,4 +41,4 @@ const EditReview = props => {
     );
 }
 
-export default withRouter(EditReview);
+export default withRouter(DeleteReview);

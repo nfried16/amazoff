@@ -9,6 +9,7 @@ const layout = {
     wrapperCol: { span: 16 },
 };
 
+// Edit review button
 const EditReview = props => {
 
 	const [visible, setVisible] = useState(false);
@@ -25,7 +26,7 @@ const EditReview = props => {
 	}
 
 	const edit = async values => {
-		console.log(props, values)
+		// Check whether seller of product review
 		if(props.seller_id) {
 			await EditSellerReview(localStorage.getItem('token'), props.seller_id, values.title, values.rating, values.description)
 				.then(res => {

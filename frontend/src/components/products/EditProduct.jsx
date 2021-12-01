@@ -12,6 +12,7 @@ const layout = {
 const EditProduct = props => {
 
 	const [visible, setVisible] = useState(false);
+	// Images not working yet
 	const [fileList, setFileList] = useState([]);
 	const [form] = Form.useForm();
 	const [categories, setCategories] = useState([]);
@@ -40,13 +41,17 @@ const EditProduct = props => {
 	}
 
 	const uploadData = async (values) => {
+		// Add new product info to form data and send to backend
 		const formData = new FormData();
 		formData.append('name', values.name);
 		// formData.append('image', values.image.file.originFileObj);
 		formData.append('description', values.description);
 		formData.append('category', values.category);
 		const res = await edit(localStorage.getItem('token'), formData, props.product.id)
-			.then(res => props.reloadProduct())
+			.then(res => {
+				// Update info on product page
+				props.reloadProduct()
+			})
 	}
 
 	const onCancel = () => {
@@ -79,7 +84,7 @@ const EditProduct = props => {
 					form = {form}
 				>
 					<Form.Item name="name" label="Product Name" rules={[{ required: true }]}>
-						<Input />
+						<Input maxLength={50}/>
 					</Form.Item>
 					{/* <Form.Item name="image" label="Image" rules={[{ required: true }]}>
 						<Upload accept='.jpg,.jpeg' 

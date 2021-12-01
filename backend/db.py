@@ -8,6 +8,7 @@ class DB:
         db = SQLAlchemy(app)
         self.session = db.session
 
+    # User must call db.session.commit() on their own for INSERT, UPDATE, DELETE
     def execute(self, sqlstr, **kwargs):
         """Execute sqlstr and return a list of result tuples.  sqlstr will be
         wrapped automatically in a
