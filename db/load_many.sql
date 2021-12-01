@@ -5,5 +5,6 @@
 \COPY Category FROM 'data/Category.csv' WITH DELIMITER ',' NULL '' CSV
 \COPY Seller FROM 'data/Seller.csv' WITH DELIMITER ',' NULL '' CSV
 \COPY Product(name, description, image, category, creator) FROM 'data/Products.csv' WITH DELIMITER ',' NULL '' CSV
-\COPY Sellerproduct FROM 'data/SellerProduct.csv' WITH DELIMITER ',' NULL '' CSV
--- \COPY Orderitem FROM 'OrderItem.csv' WITH DELIMITER ',' NULL '' CSV
+\COPY SellerProduct FROM 'data/SellerProduct.csv' WITH DELIMITER ',' NULL '' CSV
+\COPY UserReview(user_id, seller_id, rating, title, description) FROM 'data/UserReview.csv' WITH DELIMITER ',' NULL '' CSV
+\COPY ProductReview(user_id, product_id, rating, title, description)FROM 'data/ProductReview.csv' WITH DELIMITER ',' NULL '' CSV

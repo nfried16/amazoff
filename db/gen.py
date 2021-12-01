@@ -1,8 +1,7 @@
 from werkzeug.security import generate_password_hash
 import csv
 from faker import Faker
-from random import seed
-from random import randint
+from random import seed, randint, choice
 from images.images import colors
 import sys
 
@@ -90,25 +89,38 @@ def gen_seller_product():
             writer.writerow([seller, product, amt_in_stock, price])
         print(f'{len(product_prices_amt)} generated', flush=True)
 
-# save dictionary where key= user an value = [product_id, seller_id]
-order_item = {}
-def gen_order_item():
-    with open('data/OrderItem.csv', 'w') as f:
+descriptions = ['loved', 'hated', 'fell in love with', 'ate', 'immediately threw away', 'never used', 'dunked on', 'was blown away by', 'bruhhhh']
+def gen_seller_reviews():
+    with open('data/UserReview.csv', 'w') as f:
         writer = get_csv_writer(f)
-        print('OrderItem... ', end='', flush=True)
+        print('UserReview... ', end='', flush=True)
+        for i in range(1, num_sellers+1):
+            seller = i
+            user_id = randint(1, 100)
+            rating = randint(1, 5)
+            title = fake.sentence(nb_words=4)[:-1]
+            description = f'I {choice(descriptions)} this dude'
+            writer.writerow([user_id, seller, rating, title, description])
+        print(f'{num_sellers} generated', flush=True)
+
+def gen_product_reviews():
+    with open('data/ProductReview.csv', 'w') as f:
+        writer = get_csv_writer(f)
+        print('ProductReview... ', end='', flush=True)
         for i in range(1, 2000+1):
-            seller = i%num_sellers+1
-            order_id = i
             product = i
-            price = product_prices_amt[product][0]
-            amt = product_prices_amt[product][1] // 10
-            fulfill_date = fake.date() + fake.time()
-            writer.writerow([seller, product, amt, price, order_id, fulfill_date])
-        print(f'{len(order_item)} generated', flush=True)
+            user_id = randint(1, 100)
+            rating = randint(1, 5)
+            title = fake.sentence(nb_words=4)[:-1]
+            description = f'I {choice(descriptions)} this product'
+            writer.writerow([user_id, product, rating, title, description])
+        print(f'{2000} generated', flush=True)
+
 
 gen_users(num_users)
 gen_prod_categories()
 gen_sellers()
 gen_products(num_products)
 gen_seller_product()
-gen_order_item()
+gen_seller_reviews()
+gen_product_reviews()
