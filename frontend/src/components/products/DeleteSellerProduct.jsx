@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Button, Modal, Spin } from 'antd';
 import { StopSelling } from '../../api/api';
 import { DeleteOutlined, CloseOutlined, CheckOutlined } from '@ant-design/icons';

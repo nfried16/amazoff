@@ -162,10 +162,10 @@ const Product = props => {
                     !product ? (
                         'Product does not exist'
                     ) : (
-                        <div style = {{width: '75%', display: 'flex', display: 'flex', flexDirection: 'column', marginBottom: '10vh'}}>
+                        <div style = {{width: '75%', display: 'flex', flexDirection: 'column', marginBottom: '10vh'}}>
                             <div style={{ width: '100%', display: 'flex', alignItems: 'center'}}>
                                 <div style={{ width: '47.5%', display: 'flex', height: '30vh', justifyContent: 'center', alignItems: 'center', background: '#EAEDED', borderRadius: '5px'}}>
-                                    <img src={`data:image/jpeg;base64,${product.image}`} style = {{maxWidth: '95%', maxHeight: '95%', minHeight: '95%'}} />
+                                    <img src={`data:image/jpeg;base64,${product.image}`} style = {{maxWidth: '95%', maxHeight: '95%', minHeight: '95%'}} alt='product-icon'/>
                                 </div>
                                 <div style = {{width: '5%'}}>
                                 </div>

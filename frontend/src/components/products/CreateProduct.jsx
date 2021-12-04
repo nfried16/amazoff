@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Modal, Form, Input, InputNumber, Menu, Select, Upload, Button } from 'antd';
 import { CreateProduct as create, GetCategories } from '../../api/api';
-import { SkinOutlined, UploadOutlined, EditOutlined } from '@ant-design/icons';
+import { UploadOutlined } from '@ant-design/icons';
 import { withRouter } from 'react-router';
 
 const layout = {

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
-import { Button, Modal, Form, Input, InputNumber, Upload, Select } from 'antd';
+import { Button, Modal, Form, Input, Select } from 'antd';
 import { EditProduct as edit, GetCategories } from '../../api/api';
-import { SkinOutlined, UploadOutlined, EditOutlined } from '@ant-design/icons';
+import { EditOutlined } from '@ant-design/icons';
 import { withRouter } from 'react-router';
 
 const layout = {
@@ -47,7 +47,7 @@ const EditProduct = props => {
 		// formData.append('image', values.image.file.originFileObj);
 		formData.append('description', values.description);
 		formData.append('category', values.category);
-		const res = await edit(localStorage.getItem('token'), formData, props.product.id)
+		await edit(localStorage.getItem('token'), formData, props.product.id)
 			.then(res => {
 				// Update info on product page
 				props.reloadProduct()
@@ -58,12 +58,12 @@ const EditProduct = props => {
 		setVisible(false);
 	}
 
-	const handleChange = (info) => {
-		let fileList = [...info.fileList];
-		// Only keep most recent
-		fileList = fileList.slice(-1);
-		setFileList(fileList);
-	};
+	// const handleChange = (info) => {
+	// 	let fileList = [...info.fileList];
+	// 	// Only keep most recent
+	// 	fileList = fileList.slice(-1);
+	// 	setFileList(fileList);
+	// };
 
 
     return (

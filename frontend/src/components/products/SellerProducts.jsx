@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { GetProductsBySeller } from '../../api/api';
-import { withRouter, Redirect } from 'react-router-dom';
-import { Input, Table, message } from 'antd';
+import { withRouter } from 'react-router-dom';
+import { Table, message } from 'antd';
 import DeleteSellerProduct from './DeleteSellerProduct';
 import EditSellerProduct from './EditSellerProduct';
 
@@ -84,7 +84,7 @@ const SellerProducts = props => {
             <div style = {{width: '75%', display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
                 <div style = {{fontSize: '2rem', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%'}}>
                     <span style = {{justifySelf: 'center'}}>
-                        {`${seller}\'s Products`}
+                        {`${seller}'s Products`}
                     </span>
                 </div>
                 <Table columns={columns} dataSource = {products} pagination = {false}

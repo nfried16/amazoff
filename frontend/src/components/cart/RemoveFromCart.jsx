@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Button, Spin } from 'antd';
-import { DeleteOutlined, CheckOutlined, CloseOutlined } from '@ant-design/icons';
+import { DeleteOutlined, CloseOutlined } from '@ant-design/icons';
 import { RemoveFromCart as remove } from '../../api/api';
 
 const RemoveFromCart = props => {
@@ -9,7 +9,11 @@ const RemoveFromCart = props => {
     const [loading, setLoading] = useState(0);
 
     switch(loading) {
-        case 0:
+        case 1:
+            return <Spin/>
+        case 2:
+            return <CloseOutlined style={{color: 'red'}}/>
+        default:
             return <Button onClick={async () => {
                 setLoading(1);
                 await remove(localStorage.getItem('token'), props.record.id, props.record.seller_id)
@@ -21,10 +25,6 @@ const RemoveFromCart = props => {
             }}
                 icon={<DeleteOutlined />}
             />
-        case 1:
-            return <Spin/>
-        case 2:
-            return <CloseOutlined style={{color: 'red'}}/>
     }
 }
 

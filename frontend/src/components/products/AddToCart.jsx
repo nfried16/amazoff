@@ -9,7 +9,13 @@ const AddToCart = props => {
     const [loading, setLoading] = useState(0);
 
     switch(loading) {
-        case 0:
+        case 1:
+            return <Spin/>
+        case 2:
+            return <CheckOutlined style={{color: '#53B635'}}/>
+        case 3:
+            return <CloseOutlined style={{color: 'red'}}/>
+        default:
             return <Button onClick={async () => {
                 setLoading(1);
                 await add(localStorage.getItem('token'), {
@@ -23,12 +29,6 @@ const AddToCart = props => {
             }}
                 icon={<ShoppingCartOutlined />}
             />
-        case 1:
-            return <Spin/>
-        case 2:
-            return <CheckOutlined style={{color: '#53B635'}}/>
-        case 3:
-            return <CloseOutlined style={{color: 'red'}}/>
     }
 }
 

@@ -1,19 +1,10 @@
-import { useEffect, useState } from 'react';
-import { Button, Modal, Form, Rate, Input } from 'antd';
+import { Button } from 'antd';
 import { DeleteSellerReview, DeleteProductReview } from '../../api/api';
 import { DeleteOutlined } from '@ant-design/icons';
 import { withRouter } from 'react-router';
 
-const layout = {
-    labelCol: { span: 6 },
-    wrapperCol: { span: 16 },
-};
-
 // Button to delete a review
 const DeleteReview = props => {
-
-	const [visible, setVisible] = useState(false);
-	const [form] = Form.useForm();
 
 	const deleteReview = async values => {
 		// Check whether or not this is a seller or product review

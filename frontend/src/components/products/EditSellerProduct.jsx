@@ -35,7 +35,7 @@ const EditProduct = props => {
 		const formData = new FormData();
 		formData.append('price', values.price);
 		formData.append('amt_in_stock', values.amt_in_stock);
-		const res = await edit(localStorage.getItem('token'), formData, props.product.product_id)
+		await edit(localStorage.getItem('token'), formData, props.product.product_id)
 			.then(res => props.reloadProducts())
 	}
 

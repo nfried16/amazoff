@@ -14,7 +14,11 @@ const FulfillButton = props => {
     
     // Else, show fulfill button
     switch(loading) {
-        case 0:
+        case 1:
+            return <Spin/>
+        case 2:
+            return <CloseOutlined style={{color: 'red'}}/>
+        default:
             return <Button onClick={async () => {
                 setLoading(1);
                 await Fulfill(localStorage.getItem('token'), props.record.order_id, props.record.product_id)
@@ -29,10 +33,6 @@ const FulfillButton = props => {
             }}
                 icon={<SendOutlined />}
             />
-        case 1:
-            return <Spin/>
-        case 2:
-            return <CloseOutlined style={{color: 'red'}}/>
     }
 }
 

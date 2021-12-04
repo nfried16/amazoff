@@ -91,7 +91,7 @@ const ProductList = props => {
         <>
         <center style ={{marginTop: '10vh'}}>
             <div style = {{fontSize: '1.5rem', fontWeight: 'bold', display: 'flex', justifyContent: 'center'}}>
-                {`Search results for \"${search}\":`}
+                {`Search results for "${search}":`}
                 <div style = {{right: '10vw', position: 'absolute'}}>
                     <Select style={{ width: 125, marginRight: '5px', fontSize: '0.75rem' }} placeholder='Category' value={category}
                         onChange={switchCategory}

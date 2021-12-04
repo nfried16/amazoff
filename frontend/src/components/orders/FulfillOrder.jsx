@@ -1,9 +1,8 @@
 import { useEffect, useState } from 'react';
 import { withRouter } from 'react-router-dom';
-import { Button, Table } from 'antd';
+import { Table } from 'antd';
 import FulfillButton from './FulfillButton';
-import { SendOutlined } from '@ant-design/icons';
-import { GetSellerOrders, Fulfill } from '../../api/api';
+import { GetSellerOrders } from '../../api/api';
 
 const FulfillOrder = props => {
 

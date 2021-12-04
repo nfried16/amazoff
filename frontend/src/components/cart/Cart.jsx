@@ -5,7 +5,7 @@ import { GetCart, Order, EditCartItem } from '../../api/api';
 import RemoveFromCart from './RemoveFromCart';
 
 function useForceUpdate(){
-    const [value, setValue] = useState(0); 
+    const [, setValue] = useState(0); 
     return () => setValue(value => value + 1);
 }
 

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Button, Modal, Form, Rate, Input } from 'antd';
 import { CreateProductReview, CreateSellerReview } from '../../api/api';
 import { PlusOutlined } from '@ant-design/icons';
