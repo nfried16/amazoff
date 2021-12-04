@@ -22,7 +22,7 @@ The following are expected to be installed already:
 - PostgreSQL and psql
 
 Once these are installed and the repository is cloned, we can install all external dependencies
-for our application by running (in root [amazoff](../) directory)
+for our application by running (in root [amazoff](/../../) directory)
 ```
 cdhmod +x install.sh
 ./install.sh
@@ -43,6 +43,6 @@ npm start
 ```
 
 Once both servers are running, the app can be accessed at http://\<external-ip>:3000
-(or http://localhost:5000 if using port-forwarding)
+(or http://localhost:3000 if using port-forwarding)
 
 
