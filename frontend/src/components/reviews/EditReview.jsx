@@ -56,7 +56,7 @@ const EditReview = props => {
 				onClick={() => setVisible(!visible)} 
 				icon = {<EditOutlined/>}
 			/>
-			<Modal title='Add Review'
+			<Modal title='Edit Review'
 				visible={visible}
 				onCancel={onCancel}
 				onOk={onOk}

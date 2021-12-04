@@ -14,5 +14,5 @@ sed -i "s/default_secret/'$secret'/g" .flaskenv
 sed -i "s/default_db_user/$user/g" .flaskenv
 sed -i "s/default_db_password/$dbpasswd/g" .flaskenv
 
-pip install pipenv
+# Install packages from Pipfile
 pipenv install

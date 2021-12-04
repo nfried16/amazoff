@@ -3,7 +3,6 @@ import csv
 from faker import Faker
 from random import seed, randint, choice
 from images.images import colors
-import sys
 
 num_users = 100
 num_sellers = 20
@@ -115,7 +114,6 @@ def gen_product_reviews():
             description = f'I {choice(descriptions)} this product'
             writer.writerow([user_id, product, rating, title, description])
         print(f'{2000} generated', flush=True)
-
 
 gen_users(num_users)
 gen_prod_categories()
