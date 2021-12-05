@@ -92,8 +92,12 @@ descriptions = ['loved', 'hated', 'fell in love with', 'ate', 'immediately threw
 def gen_seller_reviews():
     with open('data/UserReview.csv', 'w') as f:
         writer = get_csv_writer(f)
+        # A few samples
+        writer.writerow([15, 1, 5, 'Unbelievable experience', 'Nathaniel went above and beyond. When I received my ball a day late, he sent me 100 more for free.'])
+        writer.writerow([14, 1, 5, 'Love him more than my own family members', 'I named my kids after him.'])
+        writer.writerow([13, 1, 5, 'Best seller on the best platform', 'Nathaniel is like Jeff Bezos if he were incredibly chill and not bald and also very very cool.'])
         print('UserReview... ', end='', flush=True)
-        for i in range(1, num_sellers+1):
+        for i in range(2, num_sellers+1):
             seller = i
             user_id = randint(1, 100)
             rating = randint(1, 5)

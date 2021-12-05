@@ -29,15 +29,23 @@ const EditReview = props => {
 		// Check whether seller of product review
 		if(props.seller_id) {
 			await EditSellerReview(localStorage.getItem('token'), props.seller_id, values.title, values.rating, values.description)
-				.then(res => {
-					props.updateReviews();
+				.then(async res => {
+					const x = window.scrollX;
+					const y = window.scrollY;
+					await props.updateReviews();
+					// Go back to original scroll position
+					window.scrollTo(x, y);
 					setVisible(false);
 				})
 		}
 		else if(props.product_id) {
 			await EditProductReview(localStorage.getItem('token'), props.product_id, values.title, values.rating, values.description)
-				.then(res => {
-					props.updateReviews();
+				.then(async res => {
+					const x = window.scrollX;
+					const y = window.scrollY;
+					await props.updateReviews();
+					// Go back to original scroll position
+					window.scrollTo(x, y);
 					setVisible(false);
 				})
 		}

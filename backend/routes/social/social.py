@@ -38,7 +38,7 @@ def get_my_reviews():
 
     # Combine user and product reviews and sort by date
     combined = [*user_reviews, *product_reviews]
-    sorted_combined = sorted(combined, key=lambda d: d['date'], reverse=True)
+    sorted_combined = sorted(combined, key=lambda d: (d['date'], d['title']), reverse=True)
     return jsonify(sorted_combined)
 
 # Get reviews for a certain seller
