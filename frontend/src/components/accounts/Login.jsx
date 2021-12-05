@@ -1,6 +1,6 @@
 import {Login as login} from '../../api/api';
 import { withRouter } from 'react-router-dom';
-import { Form, Input, Button } from 'antd';
+import { Form, Input, Button, message } from 'antd';
 
 const layout = {
     labelCol: { span: 8 },
@@ -26,8 +26,7 @@ const Login = props => {
                 props.history.push('/home');
             })
             .catch(err => {
-                console.log(err)
-                alert('YOOOO NAHH');
+                message.error('Error logging in, check email/password');
             });
     }
 
@@ -38,7 +37,7 @@ const Login = props => {
     return (
         <div style = {{width: '100vw', height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
             <Form {...layout} form={form} name="login" onFinish={onFinish}>
-                <Form.Item name="email" label="Email" rules={[{ required: true }]}>
+                <Form.Item name="email" label="Email" rules={[{ required: true, type: 'email' }]}>
                     <Input />
                 </Form.Item>
                 <Form.Item name="password" label="Password" rules={[{ required: true }]}>
